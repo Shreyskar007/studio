@@ -44,6 +44,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { Logo } from '@/components/logo';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 
 type PrintableViewProps = {
   actionItems: ExtractActionItemsOutput | null;
@@ -112,49 +113,18 @@ const PrintableView: FC<PrintableViewProps> = ({ actionItems, keyDecisions }) =>
 
 export default function Home() {
   const [transcript, setTranscript] = useState('');
-  const [fileName, setFileName] = useState('');
   const [actionItems, setActionItems] =
     useState<ExtractActionItemsOutput | null>(null);
   const [keyDecisions, setKeyDecisions] =
     useState<ExtractKeyDecisionsOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-  
-  const parseVtt = (vttContent: string) => {
-    return vttContent
-      .split('\n')
-      .filter(line => !line.includes('-->') && !line.startsWith('WEBVTT') && line.trim() !== '' && !/^\d+$/.test(line))
-      .join(' ');
-  };
-
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      if (file.name.endsWith('.vtt')) {
-        setFileName(file.name);
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const content = e.target?.result as string;
-          const parsedTranscript = parseVtt(content);
-          setTranscript(parsedTranscript);
-        };
-        reader.readAsText(file);
-      } else {
-        toast({
-          title: 'Invalid File Type',
-          description: 'Please upload a .vtt file.',
-          variant: 'destructive',
-        });
-      }
-    }
-  };
-
 
   const handleProcessTranscript = async () => {
     if (!transcript.trim()) {
       toast({
-        title: 'No transcript found',
-        description: 'Please upload a VTT file to proceed.',
+        title: 'No transcript provided',
+        description: 'Please paste a transcript to proceed.',
         variant: 'destructive',
       });
       return;
@@ -261,24 +231,16 @@ export default function Home() {
                   <FileText /> Meeting Transcript
                 </CardTitle>
                 <CardDescription>
-                  Upload a .vtt file to get started.
+                  Paste your meeting transcript below to get started.
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer bg-muted/50 hover:bg-muted/75">
-                  <label htmlFor="file-upload" className="flex flex-col items-center justify-center w-full h-full cursor-pointer">
-                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                          <Upload className="w-10 h-10 mb-3 text-gray-400" />
-                          <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                            <span className="font-semibold">Click to upload</span> or drag and drop
-                          </p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">VTT files only</p>
-                          {fileName && <p className="text-sm text-primary mt-2">{fileName}</p>}
-                      </div>
-                      <Input id="file-upload" type="file" className="hidden" accept=".vtt" onChange={handleFileChange} />
-                  </label>
-                </div>
-
+                <Textarea
+                  placeholder="Paste your meeting transcript here..."
+                  className="h-64"
+                  value={transcript}
+                  onChange={(e) => setTranscript(e.target.value)}
+                />
                 <Button
                   className="w-full mt-4"
                   onClick={handleProcessTranscript}
@@ -318,7 +280,7 @@ export default function Home() {
                       Your meeting summary will appear here
                     </h3>
                     <p className="text-muted-foreground mt-2 max-w-sm">
-                      Just upload your transcript and click "Generate Minutes" to
+                      Just paste your transcript and click "Generate Minutes" to
                       see the AI-powered summary, key decisions, and action items.
                     </p>
                   </CardContent>
