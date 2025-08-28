@@ -12,6 +12,7 @@ import {
   Clipboard,
   Printer,
   ChevronRight,
+  Upload,
 } from 'lucide-react';
 
 import {
@@ -40,9 +41,9 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Logo } from '@/components/logo';
+import { Input } from '@/components/ui/input';
 
 type PrintableViewProps = {
   actionItems: ExtractActionItemsOutput | null;
@@ -111,18 +112,49 @@ const PrintableView: FC<PrintableViewProps> = ({ actionItems, keyDecisions }) =>
 
 export default function Home() {
   const [transcript, setTranscript] = useState('');
+  const [fileName, setFileName] = useState('');
   const [actionItems, setActionItems] =
     useState<ExtractActionItemsOutput | null>(null);
   const [keyDecisions, setKeyDecisions] =
     useState<ExtractKeyDecisionsOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  
+  const parseVtt = (vttContent: string) => {
+    return vttContent
+      .split('\n')
+      .filter(line => !line.includes('-->') && !line.startsWith('WEBVTT') && line.trim() !== '' && !/^\d+$/.test(line))
+      .join(' ');
+  };
+
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      if (file.name.endsWith('.vtt')) {
+        setFileName(file.name);
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const content = e.target?.result as string;
+          const parsedTranscript = parseVtt(content);
+          setTranscript(parsedTranscript);
+        };
+        reader.readAsText(file);
+      } else {
+        toast({
+          title: 'Invalid File Type',
+          description: 'Please upload a .vtt file.',
+          variant: 'destructive',
+        });
+      }
+    }
+  };
+
 
   const handleProcessTranscript = async () => {
     if (!transcript.trim()) {
       toast({
-        title: 'Transcript is empty',
-        description: 'Please paste your meeting transcript to proceed.',
+        title: 'No transcript found',
+        description: 'Please upload a VTT file to proceed.',
         variant: 'destructive',
       });
       return;
@@ -229,17 +261,24 @@ export default function Home() {
                   <FileText /> Meeting Transcript
                 </CardTitle>
                 <CardDescription>
-                  Paste the full transcript of your meeting below to get started.
+                  Upload a .vtt file to get started.
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Textarea
-                  className="min-h-[400px] text-sm font-mono bg-muted/50"
-                  placeholder="[00:00:00] Alice: Okay team, let's kick off the weekly sync..."
-                  value={transcript}
-                  onChange={(e) => setTranscript(e.target.value)}
-                  disabled={isLoading}
-                />
+                <div className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer bg-muted/50 hover:bg-muted/75">
+                  <label htmlFor="file-upload" className="flex flex-col items-center justify-center w-full h-full cursor-pointer">
+                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                          <Upload className="w-10 h-10 mb-3 text-gray-400" />
+                          <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                            <span className="font-semibold">Click to upload</span> or drag and drop
+                          </p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">VTT files only</p>
+                          {fileName && <p className="text-sm text-primary mt-2">{fileName}</p>}
+                      </div>
+                      <Input id="file-upload" type="file" className="hidden" accept=".vtt" onChange={handleFileChange} />
+                  </label>
+                </div>
+
                 <Button
                   className="w-full mt-4"
                   onClick={handleProcessTranscript}
@@ -279,7 +318,7 @@ export default function Home() {
                       Your meeting summary will appear here
                     </h3>
                     <p className="text-muted-foreground mt-2 max-w-sm">
-                      Just paste your transcript and click "Generate Minutes" to
+                      Just upload your transcript and click "Generate Minutes" to
                       see the AI-powered summary, key decisions, and action items.
                     </p>
                   </CardContent>
