@@ -81,109 +81,111 @@ export default function CalendarPage() {
         <SidebarInset>
         <main className="p-4 md:p-8">
            <h1 className="text-3xl font-bold mb-8">Calendar</h1>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-            <div className="lg:col-span-2">
-               <Card>
-                <Calendar
-                  mode="single"
-                  selected={selectedDate}
-                  onSelect={(day) => day && setSelectedDate(day)}
-                  month={displayedMonth}
-                  onMonthChange={setDisplayedMonth}
-                  modifiers={{ scheduled: meetingDates }}
-                  modifiersClassNames={{
-                    scheduled: 'bg-primary/20 text-primary-foreground rounded-full',
-                  }}
-                  className="p-0 sm:p-3"
-                />
-               </Card>
-            </div>
+          <div className="space-y-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+              <div className="lg:col-span-2">
+                 <Card>
+                  <Calendar
+                    mode="single"
+                    selected={selectedDate}
+                    onSelect={(day) => day && setSelectedDate(day)}
+                    month={displayedMonth}
+                    onMonthChange={setDisplayedMonth}
+                    modifiers={{ scheduled: meetingDates }}
+                    modifiersClassNames={{
+                      scheduled: 'bg-primary/20 text-primary-foreground rounded-full',
+                    }}
+                    className="p-0 sm:p-3"
+                  />
+                 </Card>
+              </div>
 
-            <div className="space-y-8">
-               <Card>
-                 <CardHeader>
-                    <CardTitle className="text-xl">
-                      Schedule for <span className="text-primary">{format(selectedDate, 'MMMM d')}</span>
-                    </CardTitle>
-                    <CardDescription>
-                       {format(selectedDate, 'eeee, yyyy')}
-                    </CardDescription>
-                 </CardHeader>
-                 <CardContent>
-                    {meetingsOnSelectedDate.length > 0 ? (
-                      <ul className="space-y-4">
-                        {meetingsOnSelectedDate.map((meeting) => (
-                          <li key={meeting.id}>
-                            <Card className="hover:shadow-md transition-shadow duration-200">
-                              <CardContent className="p-4">
-                                <h4 className="font-semibold text-base mb-2">{meeting.title}</h4>
-                                <div className="flex items-center text-sm text-muted-foreground mb-3">
-                                    {getPlatformIcon(meeting.platform, "h-4 w-4 mr-2")}
-                                    <span>{meeting.platform}</span>
-                                    <span className="mx-2">|</span>
-                                    <Clock className="h-4 w-4 mr-1.5" />
-                                    <span>{format(parseISO(meeting.date), 'p')}</span>
-                                </div>
-                                <p className="text-sm p-3 bg-muted rounded-md border">{meeting.summary}</p>
-                               <Link
-                                  href={meeting.link}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                >
-                                  <Button variant="secondary" size="sm" className="w-full mt-4">
-                                    Join Meeting
-                                  </Button>
-                                </Link>
-                              </CardContent>
-                            </Card>
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <div className="flex flex-col items-center justify-center p-8 text-center border-dashed border-2 rounded-lg">
-                          <CalendarIcon className="h-12 w-12 text-muted-foreground mb-4" />
-                          <h3 className="text-lg font-semibold">No Meetings</h3>
-                          <p className="text-sm text-muted-foreground">
-                            There are no meetings scheduled for this date.
-                          </p>
-                      </div>
-                    )}
-                 </CardContent>
-               </Card>
-               
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center text-xl">
-                     <FileText className="mr-3 h-5 w-5" />
-                     Recent Summaries
-                  </CardTitle>
-                   <CardDescription>A look at your last 5 summarized meetings.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {recentTranscripts.length > 0 ? (
-                    <ul className="space-y-4">
-                      {recentTranscripts.map(meeting => (
-                         <li key={`recent-${meeting.id}`} className="flex items-start gap-4">
-                            <div className="text-xs text-muted-foreground text-center">
-                              <p className="font-bold">{format(parseISO(meeting.date), 'MMM')}</p>
-                              <p className="text-lg font-mono">{format(parseISO(meeting.date), 'd')}</p>
-                            </div>
-                           <div className="flex-1 border-l pl-4">
-                              <h4 className="font-semibold text-sm">{meeting.title}</h4>
-                              <p className="text-xs text-muted-foreground truncate">{meeting.summary}</p>
-                           </div>
-                         </li>
-                      ))}
-                    </ul>
-                  ) : (
-                     <p className="text-sm text-muted-foreground text-center py-4">
-                        No meeting summaries found.
-                      </p>
-                  )}
-                </CardContent>
-              </Card>
-
+              <div className="space-y-8">
+                 <Card>
+                   <CardHeader>
+                      <CardTitle className="text-xl">
+                        Schedule for <span className="text-primary">{format(selectedDate, 'MMMM d')}</span>
+                      </CardTitle>
+                      <CardDescription>
+                         {format(selectedDate, 'eeee, yyyy')}
+                      </CardDescription>
+                   </CardHeader>
+                   <CardContent>
+                      {meetingsOnSelectedDate.length > 0 ? (
+                        <ul className="space-y-4">
+                          {meetingsOnSelectedDate.map((meeting) => (
+                            <li key={meeting.id}>
+                              <Card className="hover:shadow-md transition-shadow duration-200">
+                                <CardContent className="p-4">
+                                  <h4 className="font-semibold text-base mb-2">{meeting.title}</h4>
+                                  <div className="flex items-center text-sm text-muted-foreground mb-3">
+                                      {getPlatformIcon(meeting.platform, "h-4 w-4 mr-2")}
+                                      <span>{meeting.platform}</span>
+                                      <span className="mx-2">|</span>
+                                      <Clock className="h-4 w-4 mr-1.5" />
+                                      <span>{format(parseISO(meeting.date), 'p')}</span>
+                                  </div>
+                                  <p className="text-sm p-3 bg-muted rounded-md border">{meeting.summary}</p>
+                                 <Link
+                                    href={meeting.link}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                  >
+                                    <Button variant="secondary" size="sm" className="w-full mt-4">
+                                      Join Meeting
+                                    </Button>
+                                  </Link>
+                                </CardContent>
+                              </Card>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <div className="flex flex-col items-center justify-center p-8 text-center border-dashed border-2 rounded-lg">
+                            <CalendarIcon className="h-12 w-12 text-muted-foreground mb-4" />
+                            <h3 className="text-lg font-semibold">No Meetings</h3>
+                            <p className="text-sm text-muted-foreground">
+                              There are no meetings scheduled for this date.
+                            </p>
+                        </div>
+                      )}
+                   </CardContent>
+                 </Card>
+              </div>
             </div>
+            
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center text-xl">
+                   <FileText className="mr-3 h-5 w-5" />
+                   Recent Summaries
+                </CardTitle>
+                 <CardDescription>A look at your last 5 summarized meetings.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {recentTranscripts.length > 0 ? (
+                  <ul className="space-y-4">
+                    {recentTranscripts.map(meeting => (
+                       <li key={`recent-${meeting.id}`} className="flex items-start gap-4">
+                          <div className="text-xs text-muted-foreground text-center">
+                            <p className="font-bold">{format(parseISO(meeting.date), 'MMM')}</p>
+                            <p className="text-lg font-mono">{format(parseISO(meeting.date), 'd')}</p>
+                          </div>
+                         <div className="flex-1 border-l pl-4">
+                            <h4 className="font-semibold text-sm">{meeting.title}</h4>
+                            <p className="text-xs text-muted-foreground truncate">{meeting.summary}</p>
+                         </div>
+                       </li>
+                    ))}
+                  </ul>
+                ) : (
+                   <p className="text-sm text-muted-foreground text-center py-4">
+                      No meeting summaries found.
+                    </p>
+                )}
+              </CardContent>
+            </Card>
+
           </div>
           </main>
         </SidebarInset>
