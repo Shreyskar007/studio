@@ -36,7 +36,7 @@ import { Logo } from '@/components/logo';
 import { useAuth } from '@/hooks/use-auth';
 import { AuthGuard } from '@/components/auth-guard';
 import { useMeetings } from '@/hooks/use-meetings';
-import { format, isToday } from 'date-fns';
+import { format, isToday, parseISO } from 'date-fns';
 import { ScheduleMeetingForm } from '@/components/schedule-meeting-form';
 import { useState } from 'react';
 
@@ -58,7 +58,7 @@ const DashboardPage: FC = () => {
   const [isDialogOpen, setDialogOpen] = useState(false);
 
   const todaysMeetings = meetings.filter((meeting) =>
-    isToday(new Date(meeting.date))
+    isToday(parseISO(meeting.date))
   );
 
   const getPlatformIcon = (platform: string, className="h-4 w-4") => {
@@ -168,7 +168,7 @@ const DashboardPage: FC = () => {
                                   <p className="font-semibold">{meeting.title}</p>
                                   <p className="text-sm text-muted-foreground flex items-center mt-1">
                                     <Clock className="h-4 w-4 mr-1.5" />
-                                    {format(new Date(meeting.date), 'p')}
+                                    {format(parseISO(meeting.date), 'p')}
                                     <span className="mx-2 text-muted-foreground/50">|</span>
                                     {getPlatformIcon(meeting.platform, "h-4 w-4 mr-1.5")}
                                     {meeting.platform}
