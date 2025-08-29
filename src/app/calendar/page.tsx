@@ -4,11 +4,10 @@
 import { useState } from 'react';
 import {
   isSameDay,
-  isSameMonth,
   format,
   parseISO,
 } from 'date-fns';
-import { CalendarIcon, ChevronRight } from 'lucide-react';
+import { CalendarIcon } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { useMeetings } from '@/hooks/use-meetings';
@@ -18,6 +17,7 @@ import { Logo } from '@/components/logo';
 import { Button } from '@/components/ui/button';
 import { LogOut } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
+import Link from 'next/link';
 
 export default function CalendarPage() {
   const { signOut } = useAuth();
@@ -42,15 +42,19 @@ export default function CalendarPage() {
           <SidebarContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton href="/">
-                  Dashboard
-                </SidebarMenuButton>
+                <Link href="/">
+                  <SidebarMenuButton>
+                    Dashboard
+                  </SidebarMenuButton>
+                </Link>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton href="/calendar" isActive>
-                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  Calendar
-                </SidebarMenuButton>
+                <Link href="/calendar">
+                   <SidebarMenuButton isActive>
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    Calendar
+                  </SidebarMenuButton>
+                </Link>
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarContent>

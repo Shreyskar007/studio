@@ -1,4 +1,3 @@
-
 'use client';
 
 import type { FC } from 'react';
@@ -71,10 +70,12 @@ const DashboardPage: FC = () => {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton href="/calendar">
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  Calendar
-                </SidebarMenuButton>
+                <Link href="/calendar">
+                  <SidebarMenuButton>
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    Calendar
+                  </SidebarMenuButton>
+                </Link>
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarContent>
