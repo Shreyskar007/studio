@@ -85,7 +85,7 @@ export default function CalendarPage() {
            <h1 className="text-3xl font-bold mb-6">Calendar</h1>
           <div className="space-y-4">
              <Card className="grid grid-cols-1 md:grid-cols-2 md:gap-x-6 items-start overflow-hidden">
-                <div className="py-6 pl-2 pr-12 min-w-0">
+                <div className="py-6 pl-0 pr-12 min-w-0">
                   <Calendar
                     mode="single"
                     selected={selectedDate}
