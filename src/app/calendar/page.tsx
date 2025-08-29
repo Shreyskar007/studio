@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 import { isSameDay, format, parseISO } from 'date-fns';
-import { Calendar as CalendarIcon, Video, Users, Clock, FileText } from 'lucide-react';
+import { Calendar as CalendarIcon, Video, Users, Clock, FileText, Plus, LogOut } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { useMeetings } from '@/hooks/use-meetings';
@@ -11,11 +11,12 @@ import { AuthGuard } from '@/components/auth-guard';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarInset, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarProvider } from '@/components/ui/sidebar';
 import { Logo } from '@/components/logo';
 import { Button } from '@/components/ui/button';
-import { LogOut } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import Link from 'next/link';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { ScheduleMeetingForm } from '@/components/schedule-meeting-form';
 
 const getPlatformIcon = (platform: string, className = "h-4 w-4") => {
     if (platform === 'Google Meet') return <Users className={className} />;
@@ -27,6 +28,7 @@ const getPlatformIcon = (platform: string, className = "h-4 w-4") => {
 export default function CalendarPage() {
   const { signOut } = useAuth();
   const { meetings } = useMeetings();
+  const [isDialogOpen, setDialogOpen] = useState(false);
 
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [displayedMonth, setDisplayedMonth] = useState<Date>(new Date());
@@ -82,7 +84,28 @@ export default function CalendarPage() {
         </Sidebar>
         <SidebarInset>
         <main className="p-4">
-           <h1 className="text-3xl font-bold mb-6">Calendar</h1>
+           <div className="flex items-center justify-between mb-6">
+              <h1 className="text-3xl font-bold">Calendar</h1>
+               <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button>
+                      <Plus className="mr-2 h-4 w-4" />
+                      Schedule Meeting
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Schedule a New Meeting</DialogTitle>
+                      <DialogDescription>
+                        Fill in the details to schedule your next meeting.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <ScheduleMeetingForm
+                      onSuccess={() => setDialogOpen(false)}
+                    />
+                  </DialogContent>
+                </Dialog>
+           </div>
           <div className="space-y-4">
              <Card className="grid grid-cols-1 md:grid-cols-2 md:gap-x-6 items-start overflow-hidden">
                 <div className="py-6 pl-0 pr-12 min-w-0">
