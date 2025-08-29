@@ -100,39 +100,6 @@ export default function CalendarPage() {
             </div>
 
             <div className="space-y-8">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center text-xl">
-                     <FileText className="mr-3 h-5 w-5" />
-                     Recent Summaries
-                  </CardTitle>
-                   <CardDescription>A look at your last 5 summarized meetings.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {recentTranscripts.length > 0 ? (
-                    <ul className="space-y-4">
-                      {recentTranscripts.map(meeting => (
-                         <li key={`recent-${meeting.id}`} className="flex items-start gap-4">
-                            <div className="text-xs text-muted-foreground text-center">
-                              <p className="font-bold">{format(parseISO(meeting.date), 'MMM')}</p>
-                              <p className="text-lg font-mono">{format(parseISO(meeting.date), 'd')}</p>
-                            </div>
-                           <div className="flex-1 border-l pl-4">
-                              <h4 className="font-semibold text-sm">{meeting.title}</h4>
-                              <p className="text-xs text-muted-foreground truncate">{meeting.summary}</p>
-                           </div>
-                         </li>
-                      ))}
-                    </ul>
-                  ) : (
-                     <p className="text-sm text-muted-foreground text-center py-4">
-                        No meeting summaries found.
-                      </p>
-                  )}
-                </CardContent>
-              </Card>
-
-
                <Card>
                  <CardHeader>
                     <CardTitle className="text-xl">
@@ -183,6 +150,39 @@ export default function CalendarPage() {
                     )}
                  </CardContent>
                </Card>
+               
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center text-xl">
+                     <FileText className="mr-3 h-5 w-5" />
+                     Recent Summaries
+                  </CardTitle>
+                   <CardDescription>A look at your last 5 summarized meetings.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {recentTranscripts.length > 0 ? (
+                    <ul className="space-y-4">
+                      {recentTranscripts.map(meeting => (
+                         <li key={`recent-${meeting.id}`} className="flex items-start gap-4">
+                            <div className="text-xs text-muted-foreground text-center">
+                              <p className="font-bold">{format(parseISO(meeting.date), 'MMM')}</p>
+                              <p className="text-lg font-mono">{format(parseISO(meeting.date), 'd')}</p>
+                            </div>
+                           <div className="flex-1 border-l pl-4">
+                              <h4 className="font-semibold text-sm">{meeting.title}</h4>
+                              <p className="text-xs text-muted-foreground truncate">{meeting.summary}</p>
+                           </div>
+                         </li>
+                      ))}
+                    </ul>
+                  ) : (
+                     <p className="text-sm text-muted-foreground text-center py-4">
+                        No meeting summaries found.
+                      </p>
+                  )}
+                </CardContent>
+              </Card>
+
             </div>
           </div>
           </main>
