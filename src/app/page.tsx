@@ -50,6 +50,7 @@ import {
 } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { useMeetings } from '@/hooks/use-meetings';
+import { parseISO, format } from 'date-fns';
 
 const DashboardPage: FC = () => {
   const { user, signOut } = useAuth();
@@ -71,8 +72,8 @@ const DashboardPage: FC = () => {
       return;
     }
     
-    // Combine date and time
-    const meetingDateTime = `${newMeetingDate}T${newMeetingTime}`;
+    // Combine date and time and ensure it's a valid ISO string
+    const meetingDateTime = new Date(`${newMeetingDate}T${newMeetingTime}`).toISOString();
 
     const newMeeting = {
       id: `M${String(meetings.length + 1).padStart(3, '0')}`,
@@ -178,7 +179,7 @@ const DashboardPage: FC = () => {
                             <TableCell className="font-medium">
                               {meeting.title}
                             </TableCell>
-                            <TableCell>{new Date(meeting.date).toLocaleDateString()}</TableCell>
+                            <TableCell>{format(parseISO(meeting.date), 'PP')}</TableCell>
                             <TableCell>{meeting.platform}</TableCell>
                             <TableCell>
                               <Badge variant={meeting.status === 'Completed' ? 'outline' : 'default'}>
