@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { LogOut } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import Link from 'next/link';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const getPlatformIcon = (platform: string, className = "h-4 w-4") => {
     if (platform === 'Google Meet') return <Users className={className} />;
@@ -100,7 +101,7 @@ export default function CalendarPage() {
                  </Card>
               </div>
 
-              <div className="space-y-8">
+              <div className="space-y-4">
                  <Card>
                    <CardHeader>
                       <CardTitle className="text-xl">
@@ -112,35 +113,37 @@ export default function CalendarPage() {
                    </CardHeader>
                    <CardContent>
                       {meetingsOnSelectedDate.length > 0 ? (
-                        <ul className="space-y-4">
-                          {meetingsOnSelectedDate.map((meeting) => (
-                            <li key={meeting.id}>
-                              <Card className="hover:shadow-md transition-shadow duration-200">
-                                <CardContent className="p-4">
-                                  <h4 className="font-semibold text-base mb-2">{meeting.title}</h4>
-                                  <div className="flex items-center text-sm text-muted-foreground mb-3">
-                                      {getPlatformIcon(meeting.platform, "h-4 w-4 mr-2")}
-                                      <span>{meeting.platform}</span>
-                                      <span className="mx-2">|</span>
-                                      <Clock className="h-4 w-4 mr-1.5" />
-                                      <span>{format(parseISO(meeting.date), 'p')}</span>
-                                  </div>
-                                 <Link
-                                    href={meeting.link}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                  >
-                                    <Button variant="secondary" size="sm" className="w-full mt-4">
-                                      Join Meeting
-                                    </Button>
-                                  </Link>
-                                </CardContent>
-                              </Card>
-                            </li>
-                          ))}
-                        </ul>
+                        <ScrollArea className="h-[355px]">
+                          <ul className="space-y-4 pr-4">
+                            {meetingsOnSelectedDate.map((meeting) => (
+                              <li key={meeting.id}>
+                                <Card className="hover:shadow-md transition-shadow duration-200">
+                                  <CardContent className="p-4">
+                                    <h4 className="font-semibold text-base mb-2">{meeting.title}</h4>
+                                    <div className="flex items-center text-sm text-muted-foreground mb-3">
+                                        {getPlatformIcon(meeting.platform, "h-4 w-4 mr-2")}
+                                        <span>{meeting.platform}</span>
+                                        <span className="mx-2">|</span>
+                                        <Clock className="h-4 w-4 mr-1.5" />
+                                        <span>{format(parseISO(meeting.date), 'p')}</span>
+                                    </div>
+                                   <Link
+                                      href={meeting.link}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                    >
+                                      <Button variant="secondary" size="sm" className="w-full mt-4">
+                                        Join Meeting
+                                      </Button>
+                                    </Link>
+                                  </CardContent>
+                                </Card>
+                              </li>
+                            ))}
+                          </ul>
+                        </ScrollArea>
                       ) : (
-                        <div className="flex flex-col items-center justify-center p-8 text-center border-dashed border-2 rounded-lg">
+                        <div className="flex flex-col items-center justify-center h-[355px] text-center border-dashed border-2 rounded-lg">
                             <CalendarIcon className="h-12 w-12 text-muted-foreground mb-4" />
                             <h3 className="text-lg font-semibold">No Meetings</h3>
                             <p className="text-sm text-muted-foreground">
@@ -165,20 +168,20 @@ export default function CalendarPage() {
                 {recentTranscripts.length > 0 ? (
                   <ul className="space-y-4">
                     {recentTranscripts.map(meeting => (
-                       <li key={`recent-${meeting.id}`} className="flex items-start gap-4">
+                       <li key={`recent-${meeting.id}`} className="flex items-start gap-4 p-4 rounded-lg hover:bg-muted/50">
                           <div className="text-xs text-muted-foreground text-center">
-                            <p className="font-bold">{format(parseISO(meeting.date), 'MMM')}</p>
-                            <p className="text-lg font-mono">{format(parseISO(meeting.date), 'd')}</p>
+                            <p className="font-bold text-base">{format(parseISO(meeting.date), 'MMM')}</p>
+                            <p className="text-2xl font-mono">{format(parseISO(meeting.date), 'd')}</p>
                           </div>
-                         <div className="flex-1 border-l pl-4">
-                            <h4 className="font-semibold text-sm">{meeting.title}</h4>
-                            <p className="text-xs text-muted-foreground truncate">{meeting.summary}</p>
+                         <div className="flex-1 border-l-2 border-primary pl-4">
+                            <h4 className="font-semibold text-base">{meeting.title}</h4>
+                            <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{meeting.summary}</p>
                          </div>
                        </li>
                     ))}
                   </ul>
                 ) : (
-                   <p className="text-sm text-muted-foreground text-center py-4">
+                   <p className="text-sm text-muted-foreground text-center py-8">
                       No meeting summaries found.
                     </p>
                 )}
