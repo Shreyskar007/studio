@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 import type { FC } from 'react';
-import { Plus, Video, Calendar as CalendarIcon, LogOut } from 'lucide-react';
+import { Plus, Video, LogOut } from 'lucide-react';
 import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
@@ -36,7 +36,6 @@ import {
   SidebarFooter,
 } from '@/components/ui/sidebar';
 import { Logo } from '@/components/logo';
-import { Calendar } from '@/components/ui/calendar';
 import { useAuth } from '@/hooks/use-auth';
 import { AuthGuard } from '@/components/auth-guard';
 import { Label } from '@/components/ui/label';
@@ -110,12 +109,6 @@ const DashboardPage: FC = () => {
               <SidebarMenuItem>
                 <SidebarMenuButton href="/" isActive>
                   Dashboard
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton href="/calendar">
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  Calendar
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
@@ -255,21 +248,6 @@ const DashboardPage: FC = () => {
                         Schedule Meeting
                       </Button>
                     </form>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader>
-                    <CardTitle>My Calendar</CardTitle>
-                    <CardDescription>
-                      Your upcoming meetings at a glance.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <Calendar
-                      mode="single"
-                      selected={new Date()}
-                      className="rounded-md border"
-                    />
                   </CardContent>
                 </Card>
               </div>
