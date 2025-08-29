@@ -84,8 +84,8 @@ export default function CalendarPage() {
         <main className="p-4">
            <h1 className="text-3xl font-bold mb-6">Calendar</h1>
           <div className="space-y-4">
-             <Card className="grid grid-cols-1 md:grid-cols-2 overflow-hidden">
-                <div className="p-4 flex flex-col">
+             <Card className="grid grid-cols-1 md:grid-cols-2 md:items-start overflow-hidden">
+                <div className="p-4">
                   <Calendar
                     mode="single"
                     selected={selectedDate}
@@ -96,10 +96,10 @@ export default function CalendarPage() {
                     modifiersClassNames={{
                       scheduled: 'bg-primary/20 text-primary-foreground rounded-full',
                     }}
-                    className="w-full h-full flex-1"
+                    className="w-full"
                   />
                 </div>
-                <div className="border-l border-border flex flex-col">
+                <div className="border-l border-border flex flex-col h-full">
                   <div className="p-6">
                     <CardTitle className="text-xl">
                       Schedule for <span className="text-primary">{format(selectedDate, 'MMMM d')}</span>
