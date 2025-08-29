@@ -89,7 +89,7 @@ const DashboardPage: FC = () => {
   const [newMeetingTitle, setNewMeetingTitle] = useState('');
   const [newMeetingDate, setNewMeetingDate] = useState('');
   const [newMeetingTime, setNewMeetingTime] = useState('');
-  const [newMeetingPlatform, setNewMeetingPlatform] = useState('');
+  const [newMeetingPlatform, setNewMeetingPlatform] = useState('Google Meet');
 
   const handleScheduleMeeting = (e: React.FormEvent) => {
     e.preventDefault();
@@ -116,7 +116,7 @@ const DashboardPage: FC = () => {
     setNewMeetingTitle('');
     setNewMeetingDate('');
     setNewMeetingTime('');
-    setNewMeetingPlatform('');
+    setNewMeetingPlatform('Google Meet');
 
     toast({
       title: 'Meeting Scheduled!',
