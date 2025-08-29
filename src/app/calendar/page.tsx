@@ -22,15 +22,17 @@ import { Calendar } from '@/components/ui/calendar';
 import { AuthGuard } from '@/components/auth-guard';
 import { useAuth } from '@/hooks/use-auth';
 import { useMeetings } from '@/hooks/use-meetings';
-import { isSameDay, format, parseISO } from 'date-fns';
+import { isSameDay, format, parseISO, startOfDay } from 'date-fns';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
 
 const CalendarPage: FC = () => {
   const { signOut } = useAuth();
   const { meetings } = useMeetings();
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+  
+  const today = new Date();
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(today);
+  const [displayedMonth, setDisplayedMonth] = useState<Date>(today);
 
   // Dates are stored as ISO strings. We need to parse them into Date objects for comparison.
   // The 'date-fns' `isSameDay` function handles timezone differences correctly.
@@ -92,6 +94,8 @@ const CalendarPage: FC = () => {
                       mode="single"
                       selected={selectedDate}
                       onSelect={setSelectedDate}
+                      month={displayedMonth}
+                      onMonthChange={setDisplayedMonth}
                       modifiers={{
                         hasMeeting: meetingDates,
                       }}
