@@ -266,7 +266,7 @@ const DashboardPage: FC = () => {
                   </CardHeader>
                   <CardContent>
                     <Calendar
-                      mode="day"
+                      mode="single"
                       selected={new Date()}
                       className="rounded-md border"
                     />
