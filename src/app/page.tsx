@@ -36,7 +36,6 @@ import { Logo } from '@/components/logo';
 import { useAuth } from '@/hooks/use-auth';
 import { AuthGuard } from '@/components/auth-guard';
 import { useMeetings } from '@/hooks/use-meetings';
-import { Calendar } from '@/components/ui/calendar';
 import { format, isSameDay } from 'date-fns';
 import { ScheduleMeetingForm } from '@/components/schedule-meeting-form';
 import { useState } from 'react';
@@ -173,19 +172,6 @@ const DashboardPage: FC = () => {
               </div>
 
               <div className="space-y-8">
-                <Card className="flex justify-center">
-                  <Calendar
-                    mode="single"
-                    selected={today}
-                    className="p-3"
-                    classNames={{
-                      day_selected:
-                        'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground',
-                      day_today:
-                        'bg-accent text-accent-foreground',
-                    }}
-                  />
-                </Card>
                  <Card>
                   <CardHeader>
                     <CardTitle>Google Calendar Sync</CardTitle>
