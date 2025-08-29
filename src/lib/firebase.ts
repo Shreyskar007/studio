@@ -1,19 +1,25 @@
-import { initializeApp, getApps } from 'firebase/app';
+import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
+// IMPORTANT: Replace this with your actual Firebase configuration
 const firebaseConfig = {
-  apiKey: 'AIzaSyBfuYQBIB-5wnrsq_XCwa6tn1Uz__uIwHM',
-  authDomain: 'meetflow-44a5b.firebaseapp.com',
-  projectId: 'meetflow-44a5b',
-  storageBucket: 'meetflow-44a5b.appspot.com',
-  messagingSenderId: '277490696934',
-  appId: '1:277490696934:web:866333924792694155b4e8',
-  measurementId: 'G-3ES24MFR0Y',
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_AUTH_DOMAIN",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_STORAGE_BUCKET",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID",
 };
 
 // Initialize Firebase
-const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+let app;
+if (!getApps().length) {
+  app = initializeApp(firebaseConfig);
+} else {
+  app = getApp();
+}
+
 const auth = getAuth(app);
 const db = getFirestore(app);
 
