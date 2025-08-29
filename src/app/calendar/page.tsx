@@ -84,7 +84,7 @@ export default function CalendarPage() {
         <main className="p-4">
            <h1 className="text-3xl font-bold mb-6">Calendar</h1>
           <div className="space-y-4">
-             <Card className="grid grid-cols-1 md:grid-cols-2 md:items-start overflow-hidden">
+             <Card className="grid grid-cols-1 md:grid-cols-2 md:gap-x-6 items-start overflow-hidden">
                 <div className="p-4 min-w-0">
                   <Calendar
                     mode="single"
