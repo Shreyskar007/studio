@@ -84,7 +84,7 @@ export default function CalendarPage() {
         <main className="p-4">
            <h1 className="text-3xl font-bold mb-6">Calendar</h1>
           <div className="space-y-4">
-             <Card className="grid grid-cols-1 md:grid-cols-2 md:items-stretch">
+             <Card className="grid grid-cols-1 md:grid-cols-2 overflow-hidden">
                 <div className="p-4 flex flex-col">
                   <Calendar
                     mode="single"
@@ -96,7 +96,7 @@ export default function CalendarPage() {
                     modifiersClassNames={{
                       scheduled: 'bg-primary/20 text-primary-foreground rounded-full',
                     }}
-                    className="p-0 w-full h-full flex-1"
+                    className="w-full h-full flex-1"
                   />
                 </div>
                 <div className="border-l border-border flex flex-col">
@@ -111,7 +111,7 @@ export default function CalendarPage() {
                   <Separator />
                   <CardContent className="p-0 flex-1 flex flex-col">
                     {meetingsOnSelectedDate.length > 0 ? (
-                      <ScrollArea className="flex-1">
+                      <ScrollArea className="flex-1 h-[355px]">
                         <ul className="space-y-2 p-6">
                           {meetingsOnSelectedDate.map((meeting) => (
                             <li key={meeting.id}>
