@@ -1,7 +1,9 @@
+
 import type { Metadata } from 'next';
 import { Toaster } from '@/components/ui/toaster';
 import './globals.css';
 import { AuthProvider } from '@/hooks/use-auth';
+import { MeetingsProvider } from '@/hooks/use-meetings';
 
 export const metadata: Metadata = {
   title: 'MeetFlow',
@@ -25,8 +27,10 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased bg-background text-foreground">
         <AuthProvider>
-          {children}
-          <Toaster />
+          <MeetingsProvider>
+            {children}
+            <Toaster />
+          </MeetingsProvider>
         </AuthProvider>
       </body>
     </html>

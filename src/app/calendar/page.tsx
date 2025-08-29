@@ -20,9 +20,15 @@ import { Logo } from '@/components/logo';
 import { Calendar } from '@/components/ui/calendar';
 import { AuthGuard } from '@/components/auth-guard';
 import { useAuth } from '@/hooks/use-auth';
+import { useMeetings } from '@/hooks/use-meetings';
+import { addDays } from 'date-fns';
 
 const CalendarPage: FC = () => {
   const { signOut } = useAuth();
+  const { meetings } = useMeetings();
+
+  const meetingDates = meetings.map((meeting) => new Date(meeting.date));
+  
   return (
     <AuthGuard>
       <SidebarProvider>
@@ -70,7 +76,8 @@ const CalendarPage: FC = () => {
 
             <div className="border rounded-lg shadow-sm">
               <Calendar
-                mode="range"
+                mode="multiple"
+                selected={meetingDates}
                 className="p-0"
                 classNames={{
                   months: 'flex flex-col sm:flex-row',

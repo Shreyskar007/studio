@@ -49,43 +49,12 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-
-const initialMeetings = [
-  {
-    id: 'M001',
-    title: 'Q3 Project Kickoff',
-    date: '2023-10-26',
-    platform: 'Google Meet',
-    status: 'Completed',
-  },
-  {
-    id: 'M002',
-    title: 'Marketing Sync',
-    date: '2023-10-25',
-    platform: 'Zoom',
-    status: 'Completed',
-  },
-  {
-    id: 'M003',
-    title: 'Sprint Planning',
-    date: '2023-10-24',
-    platform: 'Teams',
-    status: 'Completed',
-  },
-  {
-    id: 'M004',
-    title: 'Client Demo Prep',
-    date: '2023-10-23',
-    platform: 'Google Meet',
-    status: 'Completed',
-  },
-];
+import { useMeetings } from '@/hooks/use-meetings';
 
 const DashboardPage: FC = () => {
   const { user, signOut } = useAuth();
   const { toast } = useToast();
-
-  const [meetings, setMeetings] = useState(initialMeetings);
+  const { meetings, addMeeting } = useMeetings();
   const [newMeetingTitle, setNewMeetingTitle] = useState('');
   const [newMeetingDate, setNewMeetingDate] = useState('');
   const [newMeetingTime, setNewMeetingTime] = useState('');
@@ -101,16 +70,19 @@ const DashboardPage: FC = () => {
       });
       return;
     }
+    
+    // Combine date and time
+    const meetingDateTime = `${newMeetingDate}T${newMeetingTime}`;
 
     const newMeeting = {
       id: `M${String(meetings.length + 1).padStart(3, '0')}`,
       title: newMeetingTitle,
-      date: newMeetingDate,
+      date: meetingDateTime,
       platform: newMeetingPlatform,
       status: 'Scheduled',
     };
 
-    setMeetings([newMeeting, ...meetings]);
+    addMeeting(newMeeting);
 
     // Reset form
     setNewMeetingTitle('');
@@ -206,7 +178,7 @@ const DashboardPage: FC = () => {
                             <TableCell className="font-medium">
                               {meeting.title}
                             </TableCell>
-                            <TableCell>{meeting.date}</TableCell>
+                            <TableCell>{new Date(meeting.date).toLocaleDateString()}</TableCell>
                             <TableCell>{meeting.platform}</TableCell>
                             <TableCell>
                               <Badge variant={meeting.status === 'Completed' ? 'outline' : 'default'}>
@@ -293,7 +265,7 @@ const DashboardPage: FC = () => {
                   </CardHeader>
                   <CardContent>
                     <Calendar
-                      mode="single"
+                      mode="day"
                       selected={new Date()}
                       className="rounded-md border"
                     />

@@ -20,11 +20,12 @@ import { Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 export default function LoginPage() {
-  const { signInWithEmail } = useAuth();
+  const { signInWithEmail, signInWithGoogle } = useAuth();
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const { toast } = useToast();
 
   const handleEmailSignIn = async (e: React.FormEvent) => {
@@ -42,7 +43,27 @@ export default function LoginPage() {
         description: errorMessage,
         variant: 'destructive',
       });
+    } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    setIsGoogleLoading(true);
+    try {
+      await signInWithGoogle();
+      router.push('/');
+    } catch (error) {
+      console.error('Google Sign-In Error:', error);
+      const errorMessage =
+        error instanceof Error ? error.message : 'An unknown error occurred.';
+      toast({
+        title: 'Sign-in failed',
+        description: 'Could not sign in with Google. Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsGoogleLoading(false);
     }
   };
 
@@ -55,7 +76,7 @@ export default function LoginPage() {
           </div>
           <CardTitle>Welcome Back</CardTitle>
           <CardDescription>
-            Enter your credentials to access your account. (Mock Login)
+            Enter your credentials to access your account.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -70,7 +91,7 @@ export default function LoginPage() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  disabled={isLoading}
+                  disabled={isLoading || isGoogleLoading}
                 />
               </div>
               <div className="space-y-2">
@@ -89,13 +110,13 @@ export default function LoginPage() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  disabled={isLoading}
+                  disabled={isLoading || isGoogleLoading}
                 />
               </div>
               <Button
                 type="submit"
                 className="w-full"
-                disabled={isLoading}
+                disabled={isLoading || isGoogleLoading}
               >
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Sign in
@@ -115,24 +136,29 @@ export default function LoginPage() {
           <Button
             variant="outline"
             className="w-full"
+            onClick={handleGoogleSignIn}
             disabled={true}
           >
-            <svg
-              className="mr-2 h-4 w-4"
-              aria-hidden="true"
-              focusable="false"
-              data-prefix="fab"
-              data-icon="google"
-              role="img"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 488 512"
-            >
-              <path
-                fill="currentColor"
-                d="M488 261.8C488 403.3 381.5 512 244 512 109.8 512 0 402.2 0 256S109.8 0 244 0c72.5 0 134.1 29.3 179.3 76.5l-64 64C291.1 112.3 269.1 96 244 96c-82.3 0-149.3 67-149.3 160s67 160 149.3 160c97.4 0 130.3-73.8 133.8-112.9H244v-75.3h236.4c4.7 25.8 7.6 54.3 7.6 84.7z"
-              ></path>
-            </svg>
-            Sign in with Google (Disabled)
+            {isGoogleLoading ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <svg
+                className="mr-2 h-4 w-4"
+                aria-hidden="true"
+                focusable="false"
+                data-prefix="fab"
+                data-icon="google"
+                role="img"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 488 512"
+              >
+                <path
+                  fill="currentColor"
+                  d="M488 261.8C488 403.3 381.5 512 244 512 109.8 512 0 402.2 0 256S109.8 0 244 0c72.5 0 134.1 29.3 179.3 76.5l-64 64C291.1 112.3 269.1 96 244 96c-82.3 0-149.3 67-149.3 160s67 160 149.3 160c97.4 0 130.3-73.8 133.8-112.9H244v-75.3h236.4c4.7 25.8 7.6 54.3 7.6 84.7z"
+                ></path>
+              </svg>
+            )}
+            Sign in with Google (Temporarily Disabled)
           </Button>
           <div className="mt-4 text-center text-sm">
             Don&apos;t have an account?{' '}
