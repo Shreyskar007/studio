@@ -54,10 +54,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     return new Promise<void>((resolve, reject) => {
       setTimeout(() => {
-        if (email === 'shrey' && password === '1111') {
+        if (email === 'shrey@gmail.com' && password === '1111') {
           const loggedInUser: User = {
             uid: 'mock-uid-shrey',
-            email: 'shrey@example.com',
+            email: 'shrey@gmail.com',
             displayName: 'Shrey (Test)',
           };
           setUser(loggedInUser);
@@ -82,7 +82,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
      setLoading(true);
      return new Promise<void>((resolve, reject) => {
         setTimeout(() => {
-            if (mockUsers[email] || email === 'shrey') {
+            if (mockUsers[email] || email === 'shrey@gmail.com') {
                 reject(new Error('This email is already in use.'));
             } else {
                 const newUser: User = {
