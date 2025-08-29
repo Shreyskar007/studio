@@ -2,7 +2,7 @@
 'use client';
 
 import type { FC } from 'react';
-import { Plus, LogOut, CalendarIcon, Users, Video, Clock } from 'lucide-react';
+import { Plus, LogOut, CalendarIcon, Users, Video, Clock, FileText } from 'lucide-react';
 import Link from 'next/link';
 import {
   Dialog,
@@ -89,6 +89,14 @@ const DashboardPage: FC = () => {
                   <SidebarMenuButton>
                     <CalendarIcon className="mr-2 h-4 w-4" />
                     Calendar
+                  </SidebarMenuButton>
+                </Link>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <Link href="/process">
+                  <SidebarMenuButton>
+                    <FileText className="mr-2 h-4 w-4" />
+                    Process Transcript
                   </SidebarMenuButton>
                 </Link>
               </SidebarMenuItem>

@@ -17,6 +17,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { ScheduleMeetingForm } from '@/components/schedule-meeting-form';
+import { Badge } from '@/components/ui/badge';
 
 const getPlatformIcon = (platform: string, className = "h-4 w-4") => {
     if (platform === 'Google Meet') return <Users className={className} />;
@@ -66,6 +67,14 @@ export default function CalendarPage() {
                    <SidebarMenuButton isActive>
                     <CalendarIcon className="mr-2 h-4 w-4" />
                     Calendar
+                  </SidebarMenuButton>
+                </Link>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <Link href="/process">
+                  <SidebarMenuButton>
+                    <FileText className="mr-2 h-4 w-4" />
+                    Process Transcript
                   </SidebarMenuButton>
                 </Link>
               </SidebarMenuItem>
@@ -187,29 +196,33 @@ export default function CalendarPage() {
               <CardContent>
                 {recentTranscripts.length > 0 ? (
                   <ul className="space-y-4">
-                    {recentTranscripts.map(meeting => (
-                       <li key={`recent-${meeting.id}`} className="flex items-start gap-4 p-4 rounded-lg hover:bg-muted/50">
-                          <div className="text-xs text-muted-foreground text-center">
-                            <p className="font-bold text-base">{format(parseISO(meeting.date), 'MMM')}</p>
-                            <p className="text-2xl font-mono">{format(parseISO(meeting.date), 'd')}</p>
-                          </div>
-                         <div className="flex-1 border-l-2 border-primary pl-4">
-                            <h4 className="font-semibold text-base">{meeting.title}</h4>
-                            <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{meeting.summary}</p>
-                         </div>
-                       </li>
+                    {recentTranscripts.map((meeting) => (
+                      <li key={`recent-${meeting.id}`}>
+                        <div className="flex items-start justify-between">
+                            <div>
+                                <h4 className="font-semibold">{meeting.title}</h4>
+                                <p className="text-sm text-muted-foreground">
+                                    {format(parseISO(meeting.date), "PPP p")}
+                                </p>
+                            </div>
+                            <Badge variant="outline">{meeting.platform}</Badge>
+                        </div>
+                      </li>
                     ))}
                   </ul>
                 ) : (
-                   <p className="text-sm text-muted-foreground text-center py-8">
-                      No meeting summaries found.
+                  <div className="text-center py-8 border-2 border-dashed rounded-lg">
+                    <FileText className="mx-auto h-12 w-12 text-muted-foreground" />
+                    <h3 className="mt-4 text-lg font-medium">No Recent Summaries</h3>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                        Process a meeting transcript to see its summary here.
                     </p>
+                  </div>
                 )}
               </CardContent>
             </Card>
-
           </div>
-          </main>
+        </main>
         </SidebarInset>
       </SidebarProvider>
     </AuthGuard>
