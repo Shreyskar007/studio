@@ -1,3 +1,4 @@
+
 'use client';
 
 import {
@@ -7,17 +8,19 @@ import {
   useEffect,
   ReactNode,
 } from 'react';
-import {
-  onAuthStateChanged,
-  User,
-  GoogleAuthProvider,
-  signInWithPopup,
-  signOut as firebaseSignOut,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from 'firebase/auth';
-import { auth } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
+
+// Mock User type, simplified from Firebase User
+export interface User {
+  uid: string;
+  email: string | null;
+  displayName: string | null;
+}
+
+// In-memory store for mock users
+const mockUsers: { [email: string]: { password: string; user: User } } = {};
+// Store the current user in a global variable to persist across renders in development
+let globalUser: User | null = null;
 
 interface AuthContextType {
   user: User | null;
@@ -31,39 +34,74 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(globalUser);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
+    // Simulate checking auth state on load
+    const timeout = setTimeout(() => {
+      setUser(globalUser);
       setLoading(false);
-    });
+    }, 500); // Simulate a short loading delay
 
-    return () => unsubscribe();
+    return () => clearTimeout(timeout);
   }, []);
 
   const signInWithGoogle = async () => {
-    const provider = new GoogleAuthProvider();
-    await signInWithPopup(auth, provider);
+    throw new Error('Google Sign-In is disabled in mock mode.');
   };
-  
+
   const signInWithEmail = async (email: string, password: string) => {
-    await signInWithEmailAndPassword(auth, email, password);
-  };
-
-  const signUpWithEmail = async (email: string, password: string) => {
-    await createUserWithEmailAndPassword(auth, email, password);
-  };
-
-  const signOut = () => {
-    firebaseSignOut(auth).then(() => {
-      router.push('/login');
+    return new Promise<void>((resolve, reject) => {
+      setTimeout(() => {
+        const storedUser = mockUsers[email];
+        if (storedUser && storedUser.password === password) {
+          globalUser = storedUser.user;
+          setUser(globalUser);
+          resolve();
+        } else {
+          reject(new Error('Invalid email or password.'));
+        }
+      }, 1000); // Simulate network latency
     });
   };
 
-  const value = { user, loading, signInWithGoogle, signOut, signUpWithEmail, signInWithEmail };
+  const signUpWithEmail = async (email: string, password: string) => {
+    return new Promise<void>((resolve, reject) => {
+      setTimeout(() => {
+        if (mockUsers[email]) {
+          reject(new Error('Email is already in use.'));
+          return;
+        }
+        const newUser: User = {
+          uid: `mock_${Date.now()}`,
+          email: email,
+          displayName: email.split('@')[0],
+        };
+        mockUsers[email] = { password, user: newUser };
+        globalUser = newUser;
+        setUser(globalUser);
+        console.log('Mock users:', mockUsers);
+        resolve();
+      }, 1000);
+    });
+  };
+
+  const signOut = () => {
+    globalUser = null;
+    setUser(null);
+    router.push('/login');
+  };
+
+  const value = {
+    user,
+    loading,
+    signInWithGoogle,
+    signOut,
+    signUpWithEmail,
+    signInWithEmail,
+  };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
