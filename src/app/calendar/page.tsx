@@ -83,7 +83,7 @@ export default function CalendarPage() {
         <SidebarInset>
         <main className="p-4 md:p-8">
            <h1 className="text-3xl font-bold mb-8">Calendar</h1>
-          <div className="space-y-6">
+          <div className="space-y-4">
              <Card className="grid grid-cols-1 md:grid-cols-2">
                 <div className="p-4">
                   <Calendar
