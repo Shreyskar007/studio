@@ -2,7 +2,7 @@
 'use client';
 
 import type { FC } from 'react';
-import { Plus, Video, Calendar, LogOut } from 'lucide-react';
+import { Plus, Video, Calendar as CalendarIcon, LogOut, Clock, Type } from 'lucide-react';
 import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
@@ -35,9 +35,18 @@ import {
   SidebarFooter,
 } from '@/components/ui/sidebar';
 import { Logo } from '@/components/logo';
-import { Calendar as CalendarComponent } from '@/components/ui/calendar';
+import { Calendar } from '@/components/ui/calendar';
 import { useAuth } from '@/hooks/use-auth';
 import { AuthGuard } from '@/components/auth-guard';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 const meetings = [
   {
@@ -89,7 +98,7 @@ const DashboardPage: FC = () => {
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton href="/calendar">
-                  <Calendar className="mr-2 h-4 w-4" />
+                  <CalendarIcon className="mr-2 h-4 w-4" />
                   Calendar
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -174,39 +183,58 @@ const DashboardPage: FC = () => {
               <div className="space-y-8">
                 <Card>
                   <CardHeader>
+                    <CardTitle>Schedule a Meeting</CardTitle>
+                    <CardDescription>
+                      Create a new meeting and invite participants.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="title">Title</Label>
+                      <Input id="title" placeholder="e.g. Q4 Planning" />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="date">Date</Label>
+                        <Input id="date" type="date" />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="time">Time</Label>
+                        <Input id="time" type="time" />
+                      </div>
+                    </div>
+                     <div className="space-y-2">
+                      <Label htmlFor="platform">Platform</Label>
+                      <Select>
+                        <SelectTrigger id="platform">
+                          <SelectValue placeholder="Select platform" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="gmeet">Google Meet</SelectItem>
+                          <SelectItem value="zoom">Zoom</SelectItem>
+                          <SelectItem value="teams">Microsoft Teams</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <Button className="w-full">
+                      <Video className="mr-2 h-4 w-4" />
+                      Schedule Meeting
+                    </Button>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader>
                     <CardTitle>My Calendar</CardTitle>
                     <CardDescription>
                       Your upcoming meetings at a glance.
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <CalendarComponent
+                    <Calendar
                       mode="single"
                       selected={new Date()}
                       className="rounded-md border"
                     />
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Schedule a Meeting</CardTitle>
-                    <CardDescription>
-                      Create a new meeting on your favorite platform.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="flex flex-col gap-2">
-                    <Button variant="outline">
-                      <Video className="mr-2 h-4 w-4" />
-                      Schedule on Google Meet
-                    </Button>
-                    <Button variant="outline">
-                      <Video className="mr-2 h-4 w-4" />
-                      Schedule on Zoom
-                    </Button>
-                    <Button variant="outline">
-                      <Video className="mr-2 h-4 w-4" />
-                      Schedule on Teams
-                    </Button>
                   </CardContent>
                 </Card>
               </div>
