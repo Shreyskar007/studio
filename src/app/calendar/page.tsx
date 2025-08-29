@@ -22,7 +22,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { AuthGuard } from '@/components/auth-guard';
 import { useAuth } from '@/hooks/use-auth';
 import { useMeetings } from '@/hooks/use-meetings';
-import { isSameDay, format, parseISO, startOfDay } from 'date-fns';
+import { isSameDay, format, parseISO } from 'date-fns';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
