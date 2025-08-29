@@ -2,7 +2,7 @@
 'use client';
 
 import type { FC } from 'react';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Calendar as CalendarIcon, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -34,13 +34,14 @@ const CalendarPage: FC = () => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(today);
   const [displayedMonth, setDisplayedMonth] = useState<Date>(today);
 
-  // Dates are stored as ISO strings. We need to parse them into Date objects for comparison.
-  // The 'date-fns' `isSameDay` function handles timezone differences correctly.
-  const meetingDates = meetings.map((meeting) => parseISO(meeting.date));
+  // Memoize meeting dates to avoid re-calculating on every render
+  const meetingDates = useMemo(() => meetings.map((meeting) => parseISO(meeting.date)), [meetings]);
 
-  const meetingsForSelectedDay = meetings.filter((meeting) => 
-    selectedDate && isSameDay(parseISO(meeting.date), selectedDate)
-  );
+  const meetingsForSelectedDay = useMemo(() => {
+    return meetings.filter((meeting) => 
+      selectedDate && isSameDay(parseISO(meeting.date), selectedDate)
+    );
+  }, [meetings, selectedDate]);
 
   return (
     <AuthGuard>
@@ -100,7 +101,7 @@ const CalendarPage: FC = () => {
                         hasMeeting: meetingDates,
                       }}
                       modifiersClassNames={{
-                        hasMeeting: 'bg-primary/20',
+                        hasMeeting: 'bg-primary/20 !text-primary-foreground font-bold',
                       }}
                       className="p-0"
                     />

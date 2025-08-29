@@ -65,7 +65,7 @@ export const MeetingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [meetings, setMeetings] = useState<Meeting[]>(initialMeetings);
 
   const addMeeting = (meeting: Meeting) => {
-    setMeetings((prevMeetings) => [meeting, ...prevMeetings]);
+    setMeetings((prevMeetings) => [meeting, ...prevMeetings].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
   };
 
   const value = {

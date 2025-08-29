@@ -63,7 +63,7 @@ const DashboardPage: FC = () => {
 
   const handleScheduleMeeting = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newMeetingTitle || !newMeetingDate || !newMeetingTime || !newMeetingPlatform) {
+    if (!newMeetingTitle || !newMeetingDate || !newMeetingTime) {
       toast({
         title: 'Missing Information',
         description: 'Please fill out all fields to schedule a meeting.',
