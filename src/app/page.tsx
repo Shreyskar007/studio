@@ -1,8 +1,9 @@
 
 'use client';
 
+import { useState } from 'react';
 import type { FC } from 'react';
-import { Plus, Video, Calendar as CalendarIcon, LogOut, Clock, Type } from 'lucide-react';
+import { Plus, Video, Calendar as CalendarIcon, LogOut } from 'lucide-react';
 import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
@@ -47,8 +48,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { useToast } from '@/hooks/use-toast';
 
-const meetings = [
+const initialMeetings = [
   {
     id: 'M001',
     title: 'Q3 Project Kickoff',
@@ -81,6 +83,47 @@ const meetings = [
 
 const DashboardPage: FC = () => {
   const { user, signOut } = useAuth();
+  const { toast } = useToast();
+
+  const [meetings, setMeetings] = useState(initialMeetings);
+  const [newMeetingTitle, setNewMeetingTitle] = useState('');
+  const [newMeetingDate, setNewMeetingDate] = useState('');
+  const [newMeetingTime, setNewMeetingTime] = useState('');
+  const [newMeetingPlatform, setNewMeetingPlatform] = useState('');
+
+  const handleScheduleMeeting = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newMeetingTitle || !newMeetingDate || !newMeetingTime || !newMeetingPlatform) {
+      toast({
+        title: 'Missing Information',
+        description: 'Please fill out all fields to schedule a meeting.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    const newMeeting = {
+      id: `M${String(meetings.length + 1).padStart(3, '0')}`,
+      title: newMeetingTitle,
+      date: newMeetingDate,
+      platform: newMeetingPlatform,
+      status: 'Scheduled',
+    };
+
+    setMeetings([newMeeting, ...meetings]);
+
+    // Reset form
+    setNewMeetingTitle('');
+    setNewMeetingDate('');
+    setNewMeetingTime('');
+    setNewMeetingPlatform('');
+
+    toast({
+      title: 'Meeting Scheduled!',
+      description: `${newMeeting.title} has been added to your meetings.`,
+    });
+  };
+
 
   return (
     <AuthGuard>
@@ -141,7 +184,7 @@ const DashboardPage: FC = () => {
                   <CardHeader>
                     <CardTitle>Recent Meetings</CardTitle>
                     <CardDescription>
-                      Here are the meetings you've recently processed.
+                      Here are the meetings you've recently processed or scheduled.
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -166,7 +209,9 @@ const DashboardPage: FC = () => {
                             <TableCell>{meeting.date}</TableCell>
                             <TableCell>{meeting.platform}</TableCell>
                             <TableCell>
-                              <Badge variant="outline">{meeting.status}</Badge>
+                              <Badge variant={meeting.status === 'Completed' ? 'outline' : 'default'}>
+                                {meeting.status}
+                              </Badge>
                             </TableCell>
                             <TableCell>
                               <Button variant="ghost" size="sm">
@@ -188,38 +233,55 @@ const DashboardPage: FC = () => {
                       Create a new meeting and invite participants.
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="title">Title</Label>
-                      <Input id="title" placeholder="e.g. Q4 Planning" />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
+                  <CardContent>
+                    <form onSubmit={handleScheduleMeeting} className="space-y-4">
                       <div className="space-y-2">
-                        <Label htmlFor="date">Date</Label>
-                        <Input id="date" type="date" />
+                        <Label htmlFor="title">Title</Label>
+                        <Input 
+                          id="title" 
+                          placeholder="e.g. Q4 Planning"
+                          value={newMeetingTitle}
+                          onChange={(e) => setNewMeetingTitle(e.target.value)}
+                        />
                       </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="time">Time</Label>
-                        <Input id="time" type="time" />
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="date">Date</Label>
+                          <Input 
+                            id="date" 
+                            type="date"
+                            value={newMeetingDate}
+                            onChange={(e) => setNewMeetingDate(e.target.value)}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="time">Time</Label>
+                          <Input 
+                            id="time" 
+                            type="time"
+                            value={newMeetingTime}
+                            onChange={(e) => setNewMeetingTime(e.target.value)}
+                           />
+                        </div>
                       </div>
-                    </div>
-                     <div className="space-y-2">
-                      <Label htmlFor="platform">Platform</Label>
-                      <Select>
-                        <SelectTrigger id="platform">
-                          <SelectValue placeholder="Select platform" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="gmeet">Google Meet</SelectItem>
-                          <SelectItem value="zoom">Zoom</SelectItem>
-                          <SelectItem value="teams">Microsoft Teams</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <Button className="w-full">
-                      <Video className="mr-2 h-4 w-4" />
-                      Schedule Meeting
-                    </Button>
+                       <div className="space-y-2">
+                        <Label htmlFor="platform">Platform</Label>
+                        <Select value={newMeetingPlatform} onValueChange={setNewMeetingPlatform}>
+                          <SelectTrigger id="platform">
+                            <SelectValue placeholder="Select platform" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Google Meet">Google Meet</SelectItem>
+                            <SelectItem value="Zoom">Zoom</SelectItem>
+                            <SelectItem value="Teams">Microsoft Teams</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <Button type="submit" className="w-full">
+                        <Video className="mr-2 h-4 w-4" />
+                        Schedule Meeting
+                      </Button>
+                    </form>
                   </CardContent>
                 </Card>
                 <Card>
