@@ -125,7 +125,6 @@ export default function CalendarPage() {
                                       <Clock className="h-4 w-4 mr-1.5" />
                                       <span>{format(parseISO(meeting.date), 'p')}</span>
                                   </div>
-                                  <p className="text-sm p-3 bg-muted rounded-md border">{meeting.summary}</p>
                                  <Link
                                     href={meeting.link}
                                     target="_blank"
