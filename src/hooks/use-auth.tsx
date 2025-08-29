@@ -9,18 +9,6 @@ import {
   ReactNode,
 } from 'react';
 import { useRouter } from 'next/navigation';
-import {
-  Auth,
-  getAuth,
-  onAuthStateChanged,
-  User as FirebaseUser,
-  GoogleAuthProvider,
-  signInWithPopup,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut as firebaseSignOut,
-} from 'firebase/auth';
-import { app } from '@/lib/firebase';
 
 // Use a subset of the Firebase User type
 export interface User {
@@ -40,63 +28,82 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// In-memory store for mock users
+const mockUsers: { [email: string]: { password: string, user: User } } = {};
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // Set to false to avoid loading screen
   const router = useRouter();
-  const auth = getAuth(app);
 
+  // This effect will run once on mount to check for a logged-in user in session storage
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      if (firebaseUser) {
-        const { uid, email, displayName } = firebaseUser;
-        setUser({ uid, email, displayName });
-      } else {
-        setUser(null);
-      }
-      setLoading(false);
-    });
+    const storedUser = sessionStorage.getItem('mockUser');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+    setLoading(false);
+  }, []);
 
-    return () => unsubscribe();
-  }, [auth]);
 
   const signInWithGoogle = async () => {
-    const provider = new GoogleAuthProvider();
-    try {
-      await signInWithPopup(auth, provider);
-    } catch (error) {
-      console.error("Google Sign-In Error:", error);
-      // Re-throw the error to be caught by the calling component
-      throw error;
-    }
+    return Promise.reject(new Error("Google Sign-In is temporarily disabled."));
   };
   
   const signInWithEmail = async (email: string, password: string) => {
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-    } catch (error) {
-      console.error("Email Sign-In Error:", error);
-      throw error;
-    }
+    setLoading(true);
+    return new Promise<void>((resolve, reject) => {
+      setTimeout(() => {
+        if (email === 'shrey' && password === '1111') {
+          const loggedInUser: User = {
+            uid: 'mock-uid-shrey',
+            email: 'shrey@example.com',
+            displayName: 'Shrey (Test)',
+          };
+          setUser(loggedInUser);
+          sessionStorage.setItem('mockUser', JSON.stringify(loggedInUser));
+          resolve();
+        } else {
+          const existingUser = mockUsers[email];
+          if (existingUser && existingUser.password === password) {
+            setUser(existingUser.user);
+            sessionStorage.setItem('mockUser', JSON.stringify(existingUser.user));
+            resolve();
+          } else {
+             reject(new Error('Invalid email or password.'));
+          }
+        }
+        setLoading(false);
+      }, 500); // Simulate network latency
+    });
   };
 
   const signUpWithEmail = async (email: string, password: string) => {
-     try {
-      await createUserWithEmailAndPassword(auth, email, password);
-    } catch (error) {
-      console.error("Sign-Up Error:", error);
-      throw error;
-    }
+     setLoading(true);
+     return new Promise<void>((resolve, reject) => {
+        setTimeout(() => {
+            if (mockUsers[email] || email === 'shrey') {
+                reject(new Error('This email is already in use.'));
+            } else {
+                const newUser: User = {
+                    uid: `mock-uid-${Math.random().toString(36).substring(7)}`,
+                    email: email,
+                    displayName: email,
+                };
+                mockUsers[email] = { password, user: newUser };
+                setUser(newUser);
+                sessionStorage.setItem('mockUser', JSON.stringify(newUser));
+                resolve();
+            }
+            setLoading(false);
+        }, 500);
+     });
   };
 
-
-  const signOut = async () => {
-    try {
-      await firebaseSignOut(auth);
-      router.push('/login');
-    } catch (error) {
-      console.error("Sign Out Error", error);
-    }
+  const signOut = () => {
+    setUser(null);
+    sessionStorage.removeItem('mockUser');
+    router.push('/login');
   };
 
   const value = {
