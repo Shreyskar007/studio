@@ -96,7 +96,7 @@ export default function CalendarPage() {
                     modifiersClassNames={{
                       scheduled: 'bg-primary/20 text-primary-foreground rounded-full',
                     }}
-                    className="p-0 sm:p-3"
+                    className="p-0"
                   />
                  </Card>
               </div>
