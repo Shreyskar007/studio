@@ -84,8 +84,8 @@ export default function CalendarPage() {
         <main className="p-4">
            <h1 className="text-3xl font-bold mb-6">Calendar</h1>
           <div className="space-y-4">
-             <Card className="grid grid-cols-1 md:grid-cols-2">
-                <div className="p-4">
+             <Card className="grid grid-cols-1 md:grid-cols-2 md:items-stretch">
+                <div className="p-4 flex flex-col">
                   <Calendar
                     mode="single"
                     selected={selectedDate}
@@ -96,10 +96,10 @@ export default function CalendarPage() {
                     modifiersClassNames={{
                       scheduled: 'bg-primary/20 text-primary-foreground rounded-full',
                     }}
-                    className="p-0"
+                    className="p-0 w-full h-full flex-1"
                   />
                 </div>
-                <div className="border-l border-border">
+                <div className="border-l border-border flex flex-col">
                   <div className="p-6">
                     <CardTitle className="text-xl">
                       Schedule for <span className="text-primary">{format(selectedDate, 'MMMM d')}</span>
@@ -109,9 +109,9 @@ export default function CalendarPage() {
                     </CardDescription>
                   </div>
                   <Separator />
-                  <CardContent className="p-0">
+                  <CardContent className="p-0 flex-1 flex flex-col">
                     {meetingsOnSelectedDate.length > 0 ? (
-                      <ScrollArea className="h-[420px]">
+                      <ScrollArea className="flex-1">
                         <ul className="space-y-2 p-6">
                           {meetingsOnSelectedDate.map((meeting) => (
                             <li key={meeting.id}>
@@ -141,7 +141,7 @@ export default function CalendarPage() {
                         </ul>
                       </ScrollArea>
                     ) : (
-                      <div className="flex flex-col items-center justify-center h-[420px] text-center p-6">
+                      <div className="flex flex-col items-center justify-center flex-1 text-center p-6">
                           <CalendarIcon className="h-12 w-12 text-muted-foreground mb-4" />
                           <h3 className="text-lg font-semibold">No Meetings</h3>
                           <p className="text-sm text-muted-foreground">
