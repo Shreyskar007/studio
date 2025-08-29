@@ -36,7 +36,7 @@ import { Logo } from '@/components/logo';
 import { useAuth } from '@/hooks/use-auth';
 import { AuthGuard } from '@/components/auth-guard';
 import { useMeetings } from '@/hooks/use-meetings';
-import { format, isSameDay } from 'date-fns';
+import { format, isToday } from 'date-fns';
 import { ScheduleMeetingForm } from '@/components/schedule-meeting-form';
 import { useState } from 'react';
 
@@ -45,9 +45,8 @@ const DashboardPage: FC = () => {
   const { meetings } = useMeetings();
   const [isDialogOpen, setDialogOpen] = useState(false);
 
-  const today = new Date();
   const todaysMeetings = meetings.filter((meeting) =>
-    isSameDay(new Date(meeting.date), today)
+    isToday(new Date(meeting.date))
   );
 
   const getPlatformIcon = (platform: string) => {
@@ -130,7 +129,7 @@ const DashboardPage: FC = () => {
                     <CardTitle>Today's Meetings</CardTitle>
                     <CardDescription>
                       Here are your scheduled meetings for today,{' '}
-                      {format(today, 'PPP')}.
+                      {format(new Date(), 'PPP')}.
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
