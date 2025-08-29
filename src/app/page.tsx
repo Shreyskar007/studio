@@ -1,7 +1,8 @@
+
 'use client';
 
 import type { FC } from 'react';
-import { Plus, LogOut, CalendarIcon, Users, Video } from 'lucide-react';
+import { Plus, LogOut, CalendarIcon, Users, Video, Clock } from 'lucide-react';
 import Link from 'next/link';
 import {
   Dialog,
@@ -39,6 +40,18 @@ import { format, isToday } from 'date-fns';
 import { ScheduleMeetingForm } from '@/components/schedule-meeting-form';
 import { useState } from 'react';
 
+const StatCard: FC<{ title: string; value: string | number, icon: React.ReactNode }> = ({ title, value, icon }) => (
+  <Card>
+    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+      <CardTitle className="text-sm font-medium">{title}</CardTitle>
+      <div className="text-muted-foreground">{icon}</div>
+    </CardHeader>
+    <CardContent>
+      <div className="text-2xl font-bold">{value}</div>
+    </CardContent>
+  </Card>
+);
+
 const DashboardPage: FC = () => {
   const { user, signOut } = useAuth();
   const { meetings } = useMeetings();
@@ -48,11 +61,11 @@ const DashboardPage: FC = () => {
     isToday(new Date(meeting.date))
   );
 
-  const getPlatformIcon = (platform: string) => {
-    if (platform === 'Google Meet') return <Users className="h-4 w-4" />;
-    if (platform === 'Zoom') return <Video className="h-4 w-4" />;
-    if (platform === 'Microsoft Teams') return <Users className="h-4 w-4" />;
-    return <Video className="h-4 w-4" />;
+  const getPlatformIcon = (platform: string, className="h-4 w-4") => {
+    if (platform === 'Google Meet') return <Users className={className} />;
+    if (platform === 'Zoom') return <Video className={className} />;
+    if (platform === 'Microsoft Teams') return <Users className={className} />;
+    return <Video className={className} />;
   };
 
   return (
@@ -65,9 +78,11 @@ const DashboardPage: FC = () => {
           <SidebarContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton href="/" isActive>
-                  Dashboard
-                </SidebarMenuButton>
+                <Link href="/">
+                  <SidebarMenuButton isActive>
+                    Dashboard
+                  </SidebarMenuButton>
+                </Link>
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <Link href="/calendar">
@@ -123,6 +138,12 @@ const DashboardPage: FC = () => {
               </div>
             </div>
 
+            <div className="grid gap-6 mb-8 md:grid-cols-2 lg:grid-cols-3">
+              <StatCard title="Meetings Today" value={todaysMeetings.length} icon={<CalendarIcon />} />
+              <StatCard title="Total Meetings" value={meetings.length} icon={<Users />} />
+              <StatCard title="Platforms Used" value="3" icon={<Video />} />
+            </div>
+
             <div className="grid gap-8 grid-cols-1 lg:grid-cols-3 items-start">
               <div className="lg:col-span-2 space-y-8">
                 <Card>
@@ -137,35 +158,44 @@ const DashboardPage: FC = () => {
                     {todaysMeetings.length > 0 ? (
                       <ul className="space-y-4">
                         {todaysMeetings.map((meeting) => (
-                          <li
-                            key={meeting.id}
-                            className="flex items-center gap-4 p-3 rounded-lg bg-muted/50"
-                          >
-                            <div className="p-2 bg-primary/10 text-primary rounded-full">
-                               {getPlatformIcon(meeting.platform)}
-                            </div>
-                            <div className="flex-grow">
-                              <p className="font-semibold">{meeting.title}</p>
-                              <p className="text-sm text-muted-foreground">
-                                {format(new Date(meeting.date), 'p')}
-                              </p>
-                            </div>
-                            <Link
-                              href={meeting.link}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              <Button variant="outline" size="sm">
-                                Join
-                              </Button>
-                            </Link>
+                          <li key={meeting.id}>
+                            <Card className="hover:border-primary/50 transition-colors">
+                              <CardContent className="p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                                <div className="p-3 bg-primary/10 text-primary rounded-lg">
+                                   {getPlatformIcon(meeting.platform, "h-6 w-6")}
+                                </div>
+                                <div className="flex-grow">
+                                  <p className="font-semibold">{meeting.title}</p>
+                                  <p className="text-sm text-muted-foreground flex items-center mt-1">
+                                    <Clock className="h-4 w-4 mr-1.5" />
+                                    {format(new Date(meeting.date), 'p')}
+                                    <span className="mx-2 text-muted-foreground/50">|</span>
+                                    {getPlatformIcon(meeting.platform, "h-4 w-4 mr-1.5")}
+                                    {meeting.platform}
+                                  </p>
+                                </div>
+                                <Link
+                                  href={meeting.link}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                >
+                                  <Button variant="outline" className="w-full sm:w-auto">
+                                    Join
+                                  </Button>
+                                </Link>
+                              </CardContent>
+                            </Card>
                           </li>
                         ))}
                       </ul>
                     ) : (
-                      <p className="text-muted-foreground text-center py-8">
-                        No meetings scheduled for today.
-                      </p>
+                      <div className="text-center py-12 border-2 border-dashed rounded-lg">
+                        <CalendarIcon className="mx-auto h-12 w-12 text-muted-foreground" />
+                        <h3 className="mt-4 text-lg font-medium">No meetings today</h3>
+                        <p className="mt-1 text-sm text-muted-foreground">
+                          Enjoy your day or schedule a new meeting.
+                        </p>
+                      </div>
                     )}
                   </CardContent>
                 </Card>
@@ -176,7 +206,7 @@ const DashboardPage: FC = () => {
                   <CardHeader>
                     <CardTitle>Google Calendar Sync</CardTitle>
                      <CardDescription>
-                      Connect your Google Calendar to sync events.
+                      Connect your Google Calendar to automatically sync events.
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
