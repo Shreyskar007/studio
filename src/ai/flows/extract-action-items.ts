@@ -13,6 +13,10 @@ import {z} from 'genkit';
 
 const ExtractActionItemsInputSchema = z.object({
   transcript: z.string().describe('The transcript of the meeting.'),
+  instructions: z
+    .string()
+    .optional()
+    .describe('Custom instructions for the AI.'),
 });
 export type ExtractActionItemsInput = z.infer<typeof ExtractActionItemsInputSchema>;
 
@@ -37,6 +41,10 @@ const prompt = ai.definePrompt({
 
   Analyze the provided meeting transcript and identify clear, actionable tasks assigned to specific individuals with deadlines.
   Format the output as a JSON array where each object contains the action item, the assignee, and the deadline.
+
+  {{#if instructions}}
+  Follow these special instructions: {{{instructions}}}
+  {{/if}}
 
   Transcript: {{{transcript}}}
   Output format: 

@@ -16,6 +16,7 @@ import {
   ChevronRight,
   ChevronLeft,
   Upload,
+  Sparkles,
 } from 'lucide-react';
 
 import {
@@ -48,6 +49,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Logo } from '@/components/logo';
 import { Textarea } from '@/components/ui/textarea';
 import Link from 'next/link';
+import { Label } from '@/components/ui/label';
 
 type PrintableViewProps = {
   actionItems: ExtractActionItemsOutput | null;
@@ -116,6 +118,7 @@ const PrintableView: FC<PrintableViewProps> = ({ actionItems, keyDecisions }) =>
 
 export default function ProcessTranscriptPage() {
   const [transcript, setTranscript] = useState('');
+  const [customInstructions, setCustomInstructions] = useState('');
   const [actionItems, setActionItems] =
     useState<ExtractActionItemsOutput | null>(null);
   const [keyDecisions, setKeyDecisions] =
@@ -163,10 +166,15 @@ export default function ProcessTranscriptPage() {
     setActionItems(null);
     setKeyDecisions(null);
 
+    const flowInput = {
+      transcript,
+      instructions: customInstructions,
+    };
+
     try {
       const [actionItemsResult, keyDecisionsResult] = await Promise.all([
-        extractActionItems({ transcript }),
-        extractKeyDecisions({ transcript }),
+        extractActionItems(flowInput),
+        extractKeyDecisions(flowInput),
       ]);
 
       setActionItems(actionItemsResult);
@@ -281,15 +289,28 @@ export default function ProcessTranscriptPage() {
                   Paste your meeting transcript below or upload a file.
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-4">
                 <Textarea
                   placeholder="Paste your meeting transcript here..."
                   className="h-64"
                   value={transcript}
                   onChange={(e) => setTranscript(e.target.value)}
                 />
+                 <div>
+                  <Label htmlFor="custom-instructions" className="flex items-center gap-2 mb-2 text-muted-foreground">
+                    <Sparkles className="h-4 w-4" />
+                    Custom Instructions (Optional)
+                  </Label>
+                  <Textarea
+                    id="custom-instructions"
+                    placeholder="e.g., Focus on financial metrics, summarize in a formal tone..."
+                    className="h-24"
+                    value={customInstructions}
+                    onChange={(e) => setCustomInstructions(e.target.value)}
+                  />
+                </div>
                 <Button
-                  className="w-full mt-4"
+                  className="w-full"
                   onClick={handleProcessTranscript}
                   disabled={isLoading}
                 >

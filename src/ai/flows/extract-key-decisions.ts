@@ -13,6 +13,10 @@ import {z} from 'genkit';
 
 const ExtractKeyDecisionsInputSchema = z.object({
   transcript: z.string().describe('The transcript of the meeting.'),
+  instructions: z
+    .string()
+    .optional()
+    .describe('Custom instructions for the AI.'),
 });
 export type ExtractKeyDecisionsInput = z.infer<typeof ExtractKeyDecisionsInputSchema>;
 
@@ -37,11 +41,15 @@ const prompt = ai.definePrompt({
   Analyze the following transcript and identify the key decisions made during the meeting.
   Provide a list of the decisions and a brief summary.
 
+  {{#if instructions}}
+  Follow these special instructions: {{{instructions}}}
+  {{/if}}
+
   Transcript: {{{transcript}}}
 
   Format the output as a JSON object with 'keyDecisions' (an array of strings) and 'summary' (a string).
   Make sure the output matches the schema exactly.
-  `, // Added prompt content here
+  `,
 });
 
 const extractKeyDecisionsFlow = ai.defineFlow(
