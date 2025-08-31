@@ -72,8 +72,8 @@ export function ScheduleMeetingForm({ onSuccess }: ScheduleMeetingFormProps) {
     });
 
     toast({
-        title: 'Meeting Scheduled!',
-        description: `"${values.title}" has been added to your calendar.`
+        title: 'Redirecting to schedule meeting...',
+        description: `Your meeting "${values.title}" is being set up on ${values.platform}.`
     })
     onSuccess();
   };

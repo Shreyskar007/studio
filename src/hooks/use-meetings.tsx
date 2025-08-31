@@ -10,7 +10,8 @@ import {
 } from 'react';
 import {
   addMinutes,
-  startOfToday
+  startOfToday,
+  format as formatTz,
 } from 'date-fns';
 
 export interface Meeting {
@@ -56,24 +57,22 @@ const initialMeetings: Meeting[] = [
   },
 ];
 
-const generateMeetingDetails = (platform: Meeting['platform'], title: string) => {
-    const slug = title.toLowerCase().replace(/\s+/g, '-').substring(0, 20);
-    const randomId = Math.random().toString(36).substring(2, 12);
-    const meetingId = `${slug}-${randomId}`;
+const generateRedirectUrl = (platform: Meeting['platform'], title: string, date: string) => {
+    const meetingDate = new Date(date);
+    const startTime = formatTz(meetingDate, "HH:mm");
+    const startDate = formatTz(meetingDate, "yyyy-MM-dd");
 
-    let link = '#';
     switch (platform) {
         case 'Google Meet':
-            link = `https://meet.google.com/lookup/${meetingId}`;
-            break;
+            const googleDate = formatTz(meetingDate, "yyyyMMdd'T'HHmmss'Z'");
+            return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${googleDate}/${googleDate}&details=Meeting+created+from+MeetFlow`;
         case 'Zoom':
-             link = `https://zoom.us/j/${meetingId}`;
-            break;
+            // Zoom doesn't have a simple URL-based meeting creation form. This is a placeholder.
+             return `https://zoom.us/meeting/schedule`;
         case 'Microsoft Teams':
-            link = `https://teams.microsoft.com/l/meetup-join/19%3ameeting_${meetingId}`;
-            break;
+            // Microsoft Teams also requires API interaction for pre-filled meetings.
+            return `https://teams.microsoft.com/l/meeting/new?subject=${encodeURIComponent(title)}`;
     }
-    return { link, meetingId };
 }
 
 
@@ -82,12 +81,20 @@ export const MeetingsProvider = ({ children }: { children: ReactNode }) => {
 
   const addMeeting = useCallback(
     (meetingData: Omit<Meeting, 'id' | 'link' | 'summary' | 'meetingId'>) => {
-      const { link, meetingId } = generateMeetingDetails(meetingData.platform, meetingData.title);
+      const redirectUrl = generateRedirectUrl(meetingData.platform, meetingData.title, meetingData.date);
+      if (redirectUrl) {
+          window.open(redirectUrl, '_blank');
+      }
+      // Note: In a real app, you wouldn't add the meeting here.
+      // You'd have a backend listener for a callback from the calendar provider
+      // to create the meeting in your DB after it's made on the platform.
+      // For this mock, we'll add it anyway so it appears in the list.
+
       const newMeeting: Meeting = {
         ...meetingData,
         id: new Date().toISOString() + Math.random(),
-        meetingId: meetingId,
-        link: link,
+        meetingId: `mock-${Math.random().toString(36).substring(2, 9)}`,
+        link: '#', // The real link would come from the API callback
         summary: `This is a placeholder summary for the meeting: "${meetingData.title}". A real summary would be generated from the transcript after the meeting.`,
       };
       setMeetings((prev) => [...prev, newMeeting].sort((a,b) => new Date(a.date).getTime() - new Date(b.date).getTime()));
