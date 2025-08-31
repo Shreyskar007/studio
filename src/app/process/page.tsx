@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import type { FC } from 'react';
 import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
@@ -123,12 +123,37 @@ export default function ProcessTranscriptPage() {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const text = e.target?.result as string;
+      setTranscript(text);
+       toast({
+        title: 'File Uploaded',
+        description: `${file.name} has been loaded into the text area.`,
+      });
+    };
+    reader.onerror = () => {
+      toast({
+        title: 'File Read Error',
+        description: 'Could not read the selected file.',
+        variant: 'destructive',
+      });
+    };
+    reader.readAsText(file);
+  };
 
   const handleProcessTranscript = async () => {
     if (!transcript.trim()) {
       toast({
         title: 'No transcript provided',
-        description: 'Please paste a transcript to proceed.',
+        description: 'Please paste or upload a transcript to proceed.',
         variant: 'destructive',
       });
       return;
@@ -236,11 +261,24 @@ export default function ProcessTranscriptPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start max-w-7xl mx-auto">
             <Card className="lg:sticky top-8 self-start shadow-lg">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <FileText /> Meeting Transcript
+                <CardTitle className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <FileText /> Meeting Transcript
+                  </div>
+                   <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileUpload}
+                    className="hidden"
+                    accept=".txt,.vtt,.srt,.text"
+                  />
+                  <Button variant="outline" onClick={() => fileInputRef.current?.click()}>
+                    <Upload className="mr-2 h-4 w-4" />
+                    Upload File
+                  </Button>
                 </CardTitle>
                 <CardDescription>
-                  Paste your meeting transcript below to get started.
+                  Paste your meeting transcript below or upload a file.
                 </CardDescription>
               </CardHeader>
               <CardContent>
