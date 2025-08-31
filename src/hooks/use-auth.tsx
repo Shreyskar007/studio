@@ -29,7 +29,16 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // In-memory store for mock users
-const mockUsers: { [email: string]: { password: string, user: User } } = {};
+const mockUsers: { [email: string]: { password: string, user: User } } = {
+  'shrey@gmail.com': {
+    password: '1111',
+    user: {
+      uid: 'mock-uid-shrey',
+      email: 'shrey@gmail.com',
+      displayName: 'Shrey (Test)',
+    }
+  }
+};
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -54,24 +63,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     return new Promise<void>((resolve, reject) => {
       setTimeout(() => {
-        if (email === 'shrey@gmail.com' && password === '1111') {
-          const loggedInUser: User = {
-            uid: 'mock-uid-shrey',
-            email: 'shrey@gmail.com',
-            displayName: 'Shrey (Test)',
-          };
-          setUser(loggedInUser);
-          sessionStorage.setItem('mockUser', JSON.stringify(loggedInUser));
+        const existingUser = mockUsers[email];
+        if (existingUser && existingUser.password === password) {
+          setUser(existingUser.user);
+          sessionStorage.setItem('mockUser', JSON.stringify(existingUser.user));
           resolve();
         } else {
-          const existingUser = mockUsers[email];
-          if (existingUser && existingUser.password === password) {
-            setUser(existingUser.user);
-            sessionStorage.setItem('mockUser', JSON.stringify(existingUser.user));
-            resolve();
-          } else {
-             reject(new Error('Invalid email or password.'));
-          }
+            reject(new Error('Invalid email or password.'));
         }
         setLoading(false);
       }, 500); // Simulate network latency
@@ -82,7 +80,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
      setLoading(true);
      return new Promise<void>((resolve, reject) => {
         setTimeout(() => {
-            if (mockUsers[email] || email === 'shrey@gmail.com') {
+            if (mockUsers[email]) {
                 reject(new Error('This email is already in use.'));
             } else {
                 const newUser: User = {

@@ -27,7 +27,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Calendar } from '@/components/ui/calendar';
-import { CalendarIcon, Info } from 'lucide-react';
+import { CalendarIcon, Info, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useMeetings } from '@/hooks/use-meetings';
@@ -57,6 +57,7 @@ export function ScheduleMeetingForm({ onSuccess }: ScheduleMeetingFormProps) {
   const { toast } = useToast();
   const [step, setStep] = useState<'details' | 'confirm'>('details');
   const [meetingDetails, setMeetingDetails] = useState<Omit<Meeting, 'id'>>();
+  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -70,7 +71,10 @@ export function ScheduleMeetingForm({ onSuccess }: ScheduleMeetingFormProps) {
     },
   });
 
-  const handleRedirect = (values: FormValues) => {
+  const handleRedirect = async (values: FormValues) => {
+    setIsLoading(true);
+    await new Promise(resolve => setTimeout(resolve, 500)); // Simulate async operation
+    
     const redirectUrl = generateRedirectUrl(values.platform, values.title, values.date.toISOString());
     if (redirectUrl) {
       window.open(redirectUrl, '_blank');
@@ -94,6 +98,7 @@ export function ScheduleMeetingForm({ onSuccess }: ScheduleMeetingFormProps) {
     });
 
     setStep('confirm');
+    setIsLoading(false);
   };
 
   const handleSaveMeeting = (values: FormValues) => {
@@ -137,7 +142,7 @@ export function ScheduleMeetingForm({ onSuccess }: ScheduleMeetingFormProps) {
                 <FormItem>
                   <FormLabel>Meeting Title</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g. Project Standup" {...field} />
+                    <Input placeholder="e.g. Project Standup" {...field} disabled={isLoading} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -149,7 +154,7 @@ export function ScheduleMeetingForm({ onSuccess }: ScheduleMeetingFormProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Platform</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isLoading}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select a meeting platform" />
@@ -183,6 +188,7 @@ export function ScheduleMeetingForm({ onSuccess }: ScheduleMeetingFormProps) {
                               'pl-3 text-left font-normal',
                               !field.value && 'text-muted-foreground'
                             )}
+                            disabled={isLoading}
                           >
                             {field.value ? (
                               format(field.value, 'PPP')
@@ -214,14 +220,15 @@ export function ScheduleMeetingForm({ onSuccess }: ScheduleMeetingFormProps) {
                   <FormItem>
                     <FormLabel>Time</FormLabel>
                     <FormControl>
-                      <Input type="time" {...field} />
+                      <Input type="time" {...field} disabled={isLoading} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
-            <Button type="submit" className="w-full">
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Continue to Schedule
             </Button>
           </>
