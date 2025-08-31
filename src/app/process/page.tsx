@@ -3,6 +3,7 @@
 
 import { useState } from 'react';
 import type { FC } from 'react';
+import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
 import {
   Loader2,
@@ -13,6 +14,7 @@ import {
   Clipboard,
   Printer,
   ChevronRight,
+  ChevronLeft,
   Upload,
 } from 'lucide-react';
 
@@ -120,6 +122,7 @@ export default function ProcessTranscriptPage() {
     useState<ExtractKeyDecisionsOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const router = useRouter();
 
   const handleProcessTranscript = async () => {
     if (!transcript.trim()) {
@@ -217,6 +220,9 @@ export default function ProcessTranscriptPage() {
             <Logo />
           </Link>
           <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={() => router.back()}>
+                <ChevronLeft className="mr-2 h-4 w-4" /> Back
+            </Button>
             <Button variant="outline" size="sm" onClick={handlePrint}>
               <Printer className="mr-2 h-4 w-4" /> Print
             </Button>
@@ -386,4 +392,3 @@ export default function ProcessTranscriptPage() {
     </>
   );
 }
-

@@ -2,8 +2,9 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { isSameDay, format, parseISO } from 'date-fns';
-import { Calendar as CalendarIcon, Video, Users, Clock, FileText, Plus, LogOut } from 'lucide-react';
+import { Calendar as CalendarIcon, Video, Users, Clock, FileText, Plus, LogOut, ChevronLeft } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { useMeetings } from '@/hooks/use-meetings';
@@ -30,6 +31,7 @@ export default function CalendarPage() {
   const { signOut } = useAuth();
   const { meetings } = useMeetings();
   const [isDialogOpen, setDialogOpen] = useState(false);
+  const router = useRouter();
 
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [displayedMonth, setDisplayedMonth] = useState<Date>(new Date());
@@ -95,6 +97,11 @@ export default function CalendarPage() {
         <main className="p-4">
            <div className="flex items-center justify-between mb-6">
               <h1 className="text-3xl font-bold">Calendar</h1>
+              <div className="flex items-center gap-2">
+                 <Button variant="outline" onClick={() => router.back()}>
+                    <ChevronLeft className="mr-2 h-4 w-4" />
+                    Back
+                  </Button>
                <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
                   <DialogTrigger asChild>
                     <Button>
@@ -114,6 +121,7 @@ export default function CalendarPage() {
                     />
                   </DialogContent>
                 </Dialog>
+                </div>
            </div>
           <div className="space-y-4">
              <Card className="grid grid-cols-1 md:grid-cols-2 md:gap-x-6 items-start overflow-hidden">
