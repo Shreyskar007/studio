@@ -37,6 +37,7 @@ import { useState } from 'react';
 const formSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters.'),
   platform: z.enum(['Google Meet', 'Zoom', 'Microsoft Teams']),
+  meetingId: z.string().min(5, 'Meeting ID must be at least 5 characters.'),
   date: z.date({ required_error: 'A date is required.' }),
   time: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, 'Invalid time format (HH:mm).'),
 });
@@ -57,6 +58,7 @@ export function ScheduleMeetingForm({ onSuccess }: ScheduleMeetingFormProps) {
     defaultValues: {
       title: '',
       platform: 'Google Meet',
+      meetingId: '',
       date: new Date(),
       time: format(new Date(), 'HH:mm'),
     },
@@ -74,6 +76,7 @@ export function ScheduleMeetingForm({ onSuccess }: ScheduleMeetingFormProps) {
       title: values.title,
       platform: values.platform,
       date: meetingDateTime.toISOString(),
+      meetingId: values.meetingId,
     };
     
     addMeeting(meetingDetails);
@@ -104,30 +107,45 @@ export function ScheduleMeetingForm({ onSuccess }: ScheduleMeetingFormProps) {
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="platform"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Platform</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isLoading}>
+         <div className="grid grid-cols-2 gap-4">
+            <FormField
+            control={form.control}
+            name="platform"
+            render={({ field }) => (
+                <FormItem>
+                <FormLabel>Platform</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isLoading}>
+                    <FormControl>
+                    <SelectTrigger>
+                        <SelectValue placeholder="Select a meeting platform" />
+                    </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                    <SelectItem value="Google Meet">Google Meet</SelectItem>
+                    <SelectItem value="Zoom">Zoom</SelectItem>
+                    <SelectItem value="Microsoft Teams">
+                        Microsoft Teams
+                    </SelectItem>
+                    </SelectContent>
+                </Select>
+                <FormMessage />
+                </FormItem>
+            )}
+            />
+            <FormField
+            control={form.control}
+            name="meetingId"
+            render={({ field }) => (
+                <FormItem>
+                <FormLabel>Meeting ID</FormLabel>
                 <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a meeting platform" />
-                  </SelectTrigger>
+                    <Input placeholder="e.g. abc-def-ghi" {...field} disabled={isLoading} />
                 </FormControl>
-                <SelectContent>
-                  <SelectItem value="Google Meet">Google Meet</SelectItem>
-                  <SelectItem value="Zoom">Zoom</SelectItem>
-                  <SelectItem value="Microsoft Teams">
-                    Microsoft Teams
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                <FormMessage />
+                </FormItem>
+            )}
+            />
+        </div>
         <div className="grid grid-cols-2 gap-4">
           <FormField
             control={form.control}

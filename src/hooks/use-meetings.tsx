@@ -26,7 +26,7 @@ export interface Meeting {
 
 interface MeetingsContextType {
   meetings: Meeting[];
-  addMeeting: (meeting: Omit<Meeting, 'id' | 'link' | 'meetingId' | 'summary'>) => void;
+  addMeeting: (meeting: Omit<Meeting, 'id' | 'link' | 'summary'>) => void;
 }
 
 const MeetingsContext = createContext<MeetingsContextType | undefined>(
@@ -62,14 +62,13 @@ export const MeetingsProvider = ({ children }: { children: ReactNode }) => {
   const [meetings, setMeetings] = useState<Meeting[]>(initialMeetings);
 
   const addMeeting = useCallback(
-    (meetingData: Omit<Meeting, 'id' | 'link' | 'meetingId' | 'summary'>) => {
+    (meetingData: Omit<Meeting, 'id' | 'link' | 'summary'>) => {
        const newMeeting: Meeting = {
         ...meetingData,
         id: new Date().toISOString(),
-        meetingId: `mock-${Math.random().toString(36).substring(2, 12)}`,
         summary: `This is a placeholder summary for the meeting: "${meetingData.title}". A real summary would be generated from the transcript after the meeting.`,
+        link: generateMeetingLink(meetingData.platform, meetingData.meetingId),
        };
-       newMeeting.link = generateMeetingLink(newMeeting.platform, newMeeting.meetingId);
 
       setMeetings((prev) => [...prev, newMeeting].sort((a,b) => new Date(a.date).getTime() - new Date(b.date).getTime()));
     },
