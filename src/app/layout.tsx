@@ -31,7 +31,7 @@ export default function RootLayout({
             <div className="flex flex-col min-h-screen">
               <main className="flex-grow">{children}</main>
               <footer className="py-4 text-center text-sm text-muted-foreground">
-                made with charm by Shreyskar Shukla
+                  Made with ✨ by Shreyskar Shukla
               </footer>
             </div>
             <Toaster />
