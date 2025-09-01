@@ -28,7 +28,12 @@ export default function RootLayout({
       <body className="font-body antialiased bg-background text-foreground">
         <AuthProvider>
           <MeetingsProvider>
-            {children}
+            <div className="flex flex-col min-h-screen">
+              <main className="flex-grow">{children}</main>
+              <footer className="py-4 text-center text-sm text-muted-foreground">
+                made with charm by Shreyskar Shukla
+              </footer>
+            </div>
             <Toaster />
           </MeetingsProvider>
         </AuthProvider>
