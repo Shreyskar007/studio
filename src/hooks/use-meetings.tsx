@@ -12,7 +12,6 @@ import {
   addMinutes,
   startOfToday,
 } from 'date-fns';
-import { generateMeetingLink } from '@/lib/meeting-utils';
 
 export interface Meeting {
   id: string; // Unique ID for our internal list
@@ -26,7 +25,7 @@ export interface Meeting {
 
 interface MeetingsContextType {
   meetings: Meeting[];
-  addMeeting: (meeting: Omit<Meeting, 'id' | 'link' | 'summary'>) => void;
+  addMeeting: (meeting: Omit<Meeting, 'id' | 'summary'>) => void;
 }
 
 const MeetingsContext = createContext<MeetingsContextType | undefined>(
@@ -62,12 +61,11 @@ export const MeetingsProvider = ({ children }: { children: ReactNode }) => {
   const [meetings, setMeetings] = useState<Meeting[]>(initialMeetings);
 
   const addMeeting = useCallback(
-    (meetingData: Omit<Meeting, 'id' | 'link' | 'summary'>) => {
+    (meetingData: Omit<Meeting, 'id' | 'summary'>) => {
        const newMeeting: Meeting = {
         ...meetingData,
         id: new Date().toISOString(),
         summary: `This is a placeholder summary for the meeting: "${meetingData.title}". A real summary would be generated from the transcript after the meeting.`,
-        link: generateMeetingLink(meetingData.platform, meetingData.meetingId),
        };
 
       setMeetings((prev) => [...prev, newMeeting].sort((a,b) => new Date(a.date).getTime() - new Date(b.date).getTime()));
