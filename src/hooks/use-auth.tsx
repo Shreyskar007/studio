@@ -42,7 +42,7 @@ const mockUsers: { [email: string]: { password: string, user: User } } = {
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(false); // Set to false to avoid loading screen
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   // This effect will run once on mount to check for a logged-in user in session storage
