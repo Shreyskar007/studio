@@ -12,6 +12,7 @@ import {
   addMinutes,
   startOfToday,
 } from 'date-fns';
+import { generateMeetingLink } from '@/lib/meeting-utils';
 
 export interface Meeting {
   id: string; // Unique ID for our internal list
@@ -25,7 +26,7 @@ export interface Meeting {
 
 interface MeetingsContextType {
   meetings: Meeting[];
-  addMeeting: (meeting: Meeting) => void;
+  addMeeting: (meeting: Omit<Meeting, 'id' | 'link' | 'meetingId' | 'summary'>) => void;
 }
 
 const MeetingsContext = createContext<MeetingsContextType | undefined>(
@@ -61,8 +62,16 @@ export const MeetingsProvider = ({ children }: { children: ReactNode }) => {
   const [meetings, setMeetings] = useState<Meeting[]>(initialMeetings);
 
   const addMeeting = useCallback(
-    (meetingData: Meeting) => {
-      setMeetings((prev) => [...prev, meetingData].sort((a,b) => new Date(a.date).getTime() - new Date(b.date).getTime()));
+    (meetingData: Omit<Meeting, 'id' | 'link' | 'meetingId' | 'summary'>) => {
+       const newMeeting: Meeting = {
+        ...meetingData,
+        id: new Date().toISOString(),
+        meetingId: `mock-${Math.random().toString(36).substring(2, 12)}`,
+        summary: `This is a placeholder summary for the meeting: "${meetingData.title}". A real summary would be generated from the transcript after the meeting.`,
+       };
+       newMeeting.link = generateMeetingLink(newMeeting.platform, newMeeting.meetingId);
+
+      setMeetings((prev) => [...prev, newMeeting].sort((a,b) => new Date(a.date).getTime() - new Date(b.date).getTime()));
     },
     []
   );
