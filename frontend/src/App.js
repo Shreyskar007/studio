@@ -559,7 +559,7 @@ export default function App() {
           </div>
           <div className="flex items-center gap-2">
             <Badge variant="default">BART Model</Badge>
-            <span className="text-xs text-muted-foreground hidden sm:block">Powered by HuggingFace</span>
+            <span className="text-xs text-muted-foreground hidden sm:block">Local BART Model</span>
           </div>
         </div>
       </header>
@@ -588,7 +588,7 @@ export default function App() {
       {/* Footer */}
       <footer className="relative border-t border-border/50 py-6 mt-12 no-print">
         <p className="text-center text-xs text-muted-foreground">
-          Developed by Shreyskar Shukla &nbsp;·&nbsp; Powered by BART + HuggingFace
+          Developed by Shreyskar Shukla &nbsp;·&nbsp; Powered by BART (Local Model)
         </p>
       </footer>
     </div>

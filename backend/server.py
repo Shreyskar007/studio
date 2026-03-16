@@ -123,7 +123,6 @@ def clean_webvtt(content: str) -> str:
     text = re.sub(r"\s+", " ", text)
     text = re.sub(r"([.!?])(\w)", r"\1 \2", text)
     return text.strip()
-    return text.strip()
 
 
 # ──────────────────────────────────────────────────────────────────────
