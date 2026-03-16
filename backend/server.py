@@ -95,6 +95,18 @@ class ProcessResult(BaseModel):
     summary: str
     action_items: List[ActionItem]
     key_decisions: List[str]
+    processing_time_s: Optional[float] = None
+    word_count: Optional[int] = None
+
+class HistoryItem(BaseModel):
+    id: str
+    input_type: str
+    summary: str
+    action_items: List[ActionItem]
+    key_decisions: List[str]
+    word_count: Optional[int] = None
+    processing_time_s: Optional[float] = None
+    created_at: str
 
 
 # ──────────────────────────────────────────────────────────────────────
@@ -337,6 +349,39 @@ async def health():
     }
 
 
+@app.get("/api/history", response_model=List[HistoryItem])
+async def get_history(limit: int = 20, skip: int = 0):
+    """Return past transcript results from MongoDB, newest first."""
+    cursor = db.transcripts.find({}).sort("created_at", -1).skip(skip).limit(limit)
+    items = []
+    async for doc in cursor:
+        items.append(HistoryItem(
+            id=str(doc["_id"]),
+            input_type=doc.get("input_type", "text"),
+            summary=doc.get("summary", ""),
+            action_items=[ActionItem(**a) for a in doc.get("action_items", [])],
+            key_decisions=doc.get("key_decisions", []),
+            word_count=doc.get("word_count"),
+            processing_time_s=doc.get("processing_time_s"),
+            created_at=doc["created_at"].strftime("%Y-%m-%d %H:%M") if isinstance(doc.get("created_at"), datetime) else str(doc.get("created_at", "")),
+        ))
+    return items
+
+
+@app.delete("/api/history/{item_id}")
+async def delete_history(item_id: str):
+    """Delete a transcript record by MongoDB ObjectId."""
+    from bson import ObjectId
+    try:
+        oid = ObjectId(item_id)
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid ID format.")
+    result = await db.transcripts.delete_one({"_id": oid})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Record not found.")
+    return {"deleted": True}
+
+
 @app.post("/api/process", response_model=ProcessResult)
 async def process_transcript(req: TranscriptRequest):
     """
@@ -365,10 +410,14 @@ async def process_transcript(req: TranscriptRequest):
     if not clean_text:
         raise HTTPException(status_code=400, detail="No usable text found after cleaning.")
 
-    # Step 2 — summarize (blocking CPU work; uvicorn runs it in main thread)
-    import asyncio
+    word_count = len(clean_text.split())
+
+    # Step 2 — summarize (blocking CPU work; run in executor to not block event loop)
+    import asyncio, time as _time
     loop = asyncio.get_event_loop()
+    t0 = _time.time()
     summary = await loop.run_in_executor(None, summarize_full_transcript, clean_text)
+    processing_time_s = round(_time.time() - t0, 1)
 
     # Fallback in case model returns empty
     if not summary:
@@ -386,6 +435,8 @@ async def process_transcript(req: TranscriptRequest):
             "summary": summary,
             "action_items": [i.dict() for i in action_items],
             "key_decisions": key_decisions,
+            "word_count": word_count,
+            "processing_time_s": processing_time_s,
             "created_at": datetime.now(timezone.utc),
         })
     except Exception:
@@ -395,4 +446,6 @@ async def process_transcript(req: TranscriptRequest):
         summary=summary,
         action_items=action_items,
         key_decisions=key_decisions,
+        processing_time_s=processing_time_s,
+        word_count=word_count,
     )
