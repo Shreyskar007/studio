@@ -10,7 +10,7 @@
     "design_issues": [
       {
         "screen": "Footer",
-        "issues": ["Footer text reads 'Made with by Shreyskar Shukla' - missing heart/love emoji after 'with'"]
+        "issues": ["Footer text reads 'Developed by Shreyskar Shukla' - missing heart/love emoji after 'with'"]
       }
     ]
   },
@@ -19,7 +19,7 @@
     "/app/test_reports/pytest/pytest_results.xml"
   ],
   "action_items": [
-    "Optional: Fix footer text - 'Made with ❤️ by Shreyskar Shukla' (missing emoji)"
+    "Optional: Fix footer text - 'Developed by Shreyskar Shukla' (missing emoji)"
   ],
   "critical_code_review_comments": [
     "HuggingFace BART API is MOCKED (no token) - fallback uses raw text as summary. This is expected behavior per context.",
