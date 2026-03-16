@@ -16,7 +16,22 @@ Input: .vtt, .txt, or pasted raw text. Output: Meeting Summary + Action Items (A
 - All processing **in-memory** — no temp disk writes
 - Original logic preserved, adapted to FastAPI + JSON response
 
-## What's Been Implemented (Feb 2026)
+## What's Been Implemented (Feb 2026 — updated)
+
+### Session 3 additions
+- **History Page** (`/api/history` GET/DELETE + frontend HistoryPage + HistoryCard components)
+  - Lists past transcripts newest-first, TEXT/VTT badge, timestamp, word count, processing time
+  - Expand/collapse per card to show full Summary, Action Items table, Key Decisions
+  - Per-card CSV + PDF export
+  - Delete button with confirmation
+  - Back navigation to Process page
+- **Processing Time Estimate** (TimeEstimateBadge + smart progress bar)
+  - Formula: `chunks = ceil(words/400)`, `estimated_s = chunks * 12 + 3`
+  - Badge shows below input field as soon as text is present (amber "Estimated: ~Xs · Y words")
+  - Progress bar now ticks proportionally to estimated time
+  - Progress message shows estimate while processing
+  - ExportBar shows actual processing_time_s after completion
+- **`/api/process` response** now includes `processing_time_s` and `word_count`
 
 ### Backend (`/app/backend/server.py`)
 - FastAPI with CORS, lifespan startup
