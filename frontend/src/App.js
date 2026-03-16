@@ -588,7 +588,7 @@ export default function App() {
       {/* Footer */}
       <footer className="relative border-t border-border/50 py-6 mt-12 no-print">
         <p className="text-center text-xs text-muted-foreground">
-          Made with by Shreyskar Shukla &nbsp;·&nbsp; Powered by BART + HuggingFace
+          Made with ♥ by Shreyskar Shukla &nbsp;·&nbsp; Powered by BART + HuggingFace
         </p>
       </footer>
     </div>
