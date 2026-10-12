@@ -161,11 +161,7 @@ export default function LoginPage() {
             Sign in with Google (Temporarily Disabled)
           </Button>
           <div className="mt-4 text-center text-sm">
-            Don&apos;t have an account?{' '}
-            <Link href="/signup" className="underline">
-              Sign up
               DEMO credentials: UserName: shrey@gmail.com, Password: 1111
-            </Link>
           </div>
         </CardContent>
       </Card>
