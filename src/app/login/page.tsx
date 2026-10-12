@@ -164,6 +164,7 @@ export default function LoginPage() {
             Don&apos;t have an account?{' '}
             <Link href="/signup" className="underline">
               Sign up
+              DEMO credentials: UserName: shrey@gmail.com, Password: 1111
             </Link>
           </div>
         </CardContent>
