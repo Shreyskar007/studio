@@ -1,4 +1,3 @@
-
 'use client';
 
 import {
@@ -41,7 +40,8 @@ const mockUsers: { [email: string]: { password: string, user: User } } = {
 };
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
+  // Default to a demo user so the app doesn't require an explicit login
+  const [user, setUser] = useState<User | null>(mockUsers['shrey@gmail.com'].user);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -101,7 +101,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signOut = () => {
     setUser(null);
     sessionStorage.removeItem('mockUser');
-    router.push('/login');
+    // no redirect to /login so the app can remain usable without the login flow
   };
 
   const value = {
